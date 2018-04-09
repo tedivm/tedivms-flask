@@ -109,5 +109,5 @@ With thanks to the following Flask extensions:
 [Flask-User-starter-app](https://github.com/lingthio/Flask-User-starter-app) was used as a starting point for this code repository.
 
 ## Authors
-- Matt Hogan - matt@twintechlabs.io
+- Matt Hogan - matt AT twintechlabs DOT io
 - Ling Thio -- ling.thio AT gmail DOT com
