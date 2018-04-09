@@ -1,0 +1,49 @@
+{% extends "common/dark_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+
+{% from "common/form_macros.html" import render_field, render_submit_field %}
+  <!-- Breadcrumb-->
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">Home</li>
+    <li class="breadcrumb-item">My Account</li>
+    <li class="breadcrumb-item active">User Profile</li>
+    <!-- Breadcrumb Menu-->
+    <li class="breadcrumb-menu d-md-down-none">
+      <div class="btn-group" role="group" aria-label="Button group">
+        <a class="btn" href="#">
+          <i class="icon-speech"></i>
+        </a>
+        <a class="btn" href="./">
+          <i class="icon-graph"></i>  Dashboard</a>
+        <a class="btn" href="#">
+          <i class="icon-settings"></i>  Settings</a>
+      </div>
+    </li>
+  </ol>
+  <div class="container-fluid">
+    <div class="animated fadeIn">
+      <div class="card ">
+        <form action="" method="POST" class="form" role="form">
+          <div class="card-header ">
+            <strong>User Profile</strong>
+          </div>
+          <div class="card-body ">
+                {{ form.hidden_tag() }}
+                <div class="form-group ">
+                  <label for="nf-email ">First name</label>
+                  <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter first name" value="{{current_user.first_name}}">
+                </div>
+                <div class="form-group ">
+                  <label for="nf-password ">Last name</label>
+                  <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter last name" value="{{current_user.last_name}}">
+                </div>
+          </div>
+          <div class="card-footer ">
+            <button type="submit " class="btn btn-sm btn-primary "><i class="fa fa-dot-circle-o "></i> Submit</button>
+            <button type="reset " class="btn btn-sm btn-danger "><i class="fa fa-ban "></i> Reset</button>
+          </div>
+        </form>
+      </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Twin Tech Labs - CoreUI Flask Admin</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
+        <link rel="shortcut icon" href="images/favicon.ico">
+
+        <!-- stylesheets -->
+        <link href="{{ url_for('static', filename='css/flag-icon-css/css/flag-icon.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/simple-line-icons/css/simple-line-icons.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+        <!-- javascript -->
+        <script src="{{ url_for('static', filename='js/popper.js/dist/umd/popper.min.js') }}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/pace-progress/pace.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/@coreui/coreui/dist/js/coreui.min.js') }}"></script>
+
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    </head>
+    <body>
+        {% block body %}
+        <div class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+          <header class="app-header navbar">
+            <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('main.member_page') }}">
+              FlaskDash
+            </a>
+            <a class="nav-link nav-link--rounded pull-right" style="margin-right: 10px;" href="{{ url_for('user.logout') }}">
+              Sign out
+            </a>
+          </header>
+          <div class="app-body">
+            <div class="sidebar">
+              <nav class="sidebar-nav">
+                <ul class="nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.member_page') }}">
+                      <i class="nav-icon icon-speedometer"></i> Dashboard
+                      <span class="badge badge-primary">NEW</span>
+                    </a>
+                  </li>
+                  <li class="nav-item nav-dropdown">
+                    <a class="nav-link nav-dropdown-toggle" href="#">
+                      <i class="nav-icon icon-bell"></i> My Account</a>
+                    <ul class="nav-dropdown-items">
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.user_profile_page') }}">
+                          <i class="nav-icon icon-drop"></i> Profile</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.change_password') }}">
+                          <i class="nav-icon icon-drop"></i> Password</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="nav-title">Administration</li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.user_admin_page') }}">
+                      <i class="nav-icon icon-drop"></i> Manage Users</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          {% block pre_content %}{% endblock %}
+          <main class="main">
+          {# One-time system messages called Flash messages #}
+          {% block flash_messages %}
+              {%- with messages = get_flashed_messages(with_categories=true) -%}
+                  {% if messages %}
+                      {% for category, message in messages %}
+                          {% if category=='error' %}
+                              {% set category='danger' %}
+                          {% endif %}
+                          <div style="margin-bottom: -2px;" role="alert" class="alert alert-{{category}} alert-dismissible fade show">{{ message|safe }}</div>
+                      {% endfor %}
+                  {% endif %}
+              {%- endwith %}
+          {% endblock %}
+
+          {% block content %}{% endblock %}
+          </main>
+          {% block post_content %}{% endblock %}
+
+        {% endblock %}
+        </div>
+        <footer class="app-footer">
+          <div>FlaskDash &copy; 2018 Twin Tech Labs</div>
+          <div class="ml-auto">
+            <span>Powered by</span>
+            <a href="https://coreui.io">CoreUI</a>
+            <span>(&copy; 2018 creativeLabs.)</span>
+          </div>
+        </footer>
+      </div>
+        <script>
+            // Hide loader
+            (function() {
+                $(".alert").fadeTo(4000, 500).slideUp(500, function(){
+                    $(".alert").slideUp(500);
+                });
+            })();
+        </script>
+    </body>
+</html>

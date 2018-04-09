@@ -1,0 +1,108 @@
+{
+  "_args": [
+    [
+      "@coreui/plugin-chartjs-custom-tooltips@0.0.1",
+      "/home/matt/projects/Templates/coreui-free-bootstrap-admin-template"
+    ]
+  ],
+  "_from": "@coreui/plugin-chartjs-custom-tooltips@0.0.1",
+  "_id": "@coreui/plugin-chartjs-custom-tooltips@0.0.1",
+  "_inBundle": false,
+  "_integrity": "sha512-3Kj+JGmNnHzlNTXCD6iagI5PlaZ6+se+DM38gpT9rVbxK18vHiVRDt+seOsaZte+TZcpxX4S1XzK0ItES/xXhg==",
+  "_location": "/@coreui/plugin-chartjs-custom-tooltips",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "@coreui/plugin-chartjs-custom-tooltips@0.0.1",
+    "name": "@coreui/plugin-chartjs-custom-tooltips",
+    "escapedName": "@coreui%2fplugin-chartjs-custom-tooltips",
+    "scope": "@coreui",
+    "rawSpec": "0.0.1",
+    "saveSpec": null,
+    "fetchSpec": "0.0.1"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@coreui/plugin-chartjs-custom-tooltips/-/plugin-chartjs-custom-tooltips-0.0.1.tgz",
+  "_spec": "0.0.1",
+  "_where": "/home/matt/projects/Templates/coreui-free-bootstrap-admin-template",
+  "author": {
+    "name": "Łukasz Holeczek",
+    "url": "https://github.com/mrholek"
+  },
+  "browserslist": [
+    "last 1 major version",
+    ">= 1%",
+    "Chrome >= 45",
+    "Firefox >= 38",
+    "Edge >= 12",
+    "Explorer >= 10",
+    "iOS >= 9",
+    "Safari >= 9",
+    "Android >= 4.4",
+    "Opera >= 30"
+  ],
+  "bugs": {
+    "url": "https://github.com/coreui/plugins-chartjs-custom-tooltips/issues",
+    "email": "support@coreui.io"
+  },
+  "contributors": [
+    {
+      "name": "Andrzej Kopański",
+      "url": "https://github.com/xidedix"
+    }
+  ],
+  "description": "Chart.js custom tooltips designed for CoreUI Templates",
+  "devDependencies": {
+    "@babel/cli": "7.0.0-beta.42",
+    "@babel/core": "7.0.0-beta.42",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.42",
+    "@babel/preset-env": "7.0.0-beta.42",
+    "babel-eslint": "^8.2.2",
+    "babel-plugin-istanbul": "^4.1.5",
+    "babel-plugin-transform-es2015-modules-strip": "^0.1.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "cross-env": "^5.1.4",
+    "eslint": "^4.16.0",
+    "eslint-plugin-compat": "^2.1.0",
+    "nodemon": "^1.12.1",
+    "npm-run-all": "^4.1.2",
+    "uglify-js": "^3.3.8"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "files": [
+    "dist/",
+    "js/"
+  ],
+  "homepage": "https://coreui.io",
+  "keywords": [
+    "chart",
+    "chart.js",
+    "coreui",
+    "tooltips"
+  ],
+  "license": "MIT",
+  "main": "dist/js/custom-tooltips.js",
+  "name": "@coreui/plugin-chartjs-custom-tooltips",
+  "peerDependencies": {
+    "chart.js": "^2.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coreui/plugins-chartjs-custom-tooltips.git"
+  },
+  "scripts": {
+    "increment-version": "node build/increment-version.js",
+    "js": "npm-run-all js-lint js-compile* js-minify*",
+    "js-compile": "cross-env PLUGINS=true babel js/ --out-dir dist/js/ --source-maps",
+    "js-lint": "eslint js/",
+    "js-minify": "uglifyjs --compress typeofs=false --mangle --comments \"/^!/\" --source-map \"content=dist/js/custom-tooltips.js.map,includeSources,url=custom-tooltips.min.js.map\" --output dist/js/custom-tooltips.min.js dist/js/custom-tooltips.js",
+    "release-version": "node build/change-version.js",
+    "watch-js": "nodemon --ignore dist/ -e js -x \"npm-run-all js-compile* js-minify*\""
+  },
+  "version": "0.0.1"
+}

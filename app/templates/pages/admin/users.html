@@ -1,0 +1,64 @@
+{% extends "common/dark_base.html" %}  {# common/page_base.html extends layout.html #}
+
+{% block content %}
+
+{% from "common/form_macros.html" import render_field, render_submit_field %}
+
+  <!-- Breadcrumb-->
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">Home</li>
+    <li class="breadcrumb-item">Admin</li>
+    <li class="breadcrumb-item active">Users</li>
+    <!-- Breadcrumb Menu-->
+    <li class="breadcrumb-menu d-md-down-none">
+      <div class="btn-group" role="group" aria-label="Button group">
+        <a class="btn" href="#">
+          <i class="icon-speech"></i>
+        </a>
+        <a class="btn" href="./">
+          <i class="icon-graph"></i>  Dashboard</a>
+        <a class="btn" href="#">
+          <i class="icon-settings"></i>  Settings</a>
+      </div>
+    </li>
+  </ol>
+  <div class="container-fluid">
+    <div class="animated fadeIn">
+      <div class="card ">
+          <div class="card-header ">
+            <strong>System Users</strong>
+            <a href={{ url_for('main.create_user_page') }} class="btn btn-pill btn-sm btn-primary pull-right">Create User</a>
+          </div>
+          <div class="card-body ">
+            <table class="table table-hover table-striped" style="padding-top: 50px;">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Email</th>
+                  <th>Confirmed</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users %}
+                <tr>
+                  <td>{{user.name()}}</td>
+                  <td>{{user.role()}}</td>
+                  <td>{{user.email}}</td>
+                  <td>{{user.confirmed_at}}</td>
+                  <tD>
+                    <div class="btn-group" role="group" aria-label="...">
+                      <a href="{{ url_for('main.delete_user_page', user_id=user.id) }}"><i class="fa fa-remove"></i></a>
+                    </div>
+                  </tD>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer ">
+          </div>
+      </div>
+</div>
+{% endblock %}
