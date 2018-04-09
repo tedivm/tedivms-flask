@@ -1,5 +1,7 @@
 # FlaskDash starter app v0.7
 
+![Screenshot](https://github.com/twintechlabs/flaskdash/blob/master/app/static/images/screenshot.png)
+
 This code base serves as starting point for writing your next Flask application.
 
 It's based on the awesome work of the Ling Thio and includes the open source
