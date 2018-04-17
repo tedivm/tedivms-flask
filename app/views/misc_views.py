@@ -14,8 +14,10 @@ main_blueprint = Blueprint('main', __name__, template_folder='templates')
 
 # The User page is accessible to authenticated users (users that have logged in)
 @main_blueprint.route('/')
-@login_required  # Limits access to authenticated users
 def member_page():
+    if not current_user.is_authenticated:
+        return redirect(url_for('user.login'))
+
     return render_template('pages/member_base.html')
 
 # The Admin page is accessible to users with the 'admin' role
@@ -34,7 +36,7 @@ def user_admin_page():
 @main_blueprint.route('/create_user', methods=['GET', 'POST'])
 @roles_accepted('admin')
 def create_user_page():
-    form = UserProfileForm(request.form, current_user)
+    form = UserProfileForm(request.form, obj=current_user)
 
     if request.method == 'POST':
         user = User.query.filter(User.email == request.form['email']).first()
@@ -71,7 +73,7 @@ def delete_user_page():
 @login_required
 def user_profile_page():
     # Initialize form
-    form = UserProfileForm(request.form, current_user)
+    form = UserProfileForm(request.form, obj=current_user)
 
     # Process valid POST
     if request.method == 'POST' and form.validate():
