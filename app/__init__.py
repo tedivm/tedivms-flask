@@ -11,7 +11,7 @@ from flask import Flask
 from flask_mail import Mail
 from flask_migrate import Migrate, MigrateCommand
 from flask_sqlalchemy import SQLAlchemy
-from flask_user import UserManager, SQLAlchemyAdapter
+from flask_user import UserManager, UserMixin
 from flask_wtf.csrf import CSRFProtect
 
 # Instantiate Flask extensions
@@ -75,11 +75,7 @@ def create_app(extra_config_settings={}):
     from .models.user_models import User, MyRegisterForm
     from .views.misc_views import user_profile_page
 
-    db_adapter = SQLAlchemyAdapter(db, User)  # Setup the SQLAlchemy DB Adapter
-    user_manager = UserManager(db_adapter, app,  # Init Flask-User and bind to app
-                               register_form=MyRegisterForm,  # using a custom register form with UserProfile fields
-                               user_profile_view_function=user_profile_page,
-    )
+    user_manager = UserManager(app, db, User)
 
     return app
 

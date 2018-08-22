@@ -46,7 +46,7 @@ def create_user_page():
                         last_name=request.form['last_name'],
                         password=current_app.user_manager.hash_password(request.form['password']),
                         active=True,
-                        confirmed_at=datetime.datetime.utcnow())
+                        email_confirmed_at=datetime.datetime.utcnow())
             db.session.add(user)
             db.session.commit()
         return redirect(url_for('main.user_admin_page'))

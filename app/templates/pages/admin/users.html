@@ -46,7 +46,7 @@
                   <td>{{user.name()}}</td>
                   <td>{{user.role()}}</td>
                   <td>{{user.email}}</td>
-                  <td>{{user.confirmed_at}}</td>
+                  <td>{{user.email_confirmed_at}}</td>
                   <tD>
                     <div class="btn-group" role="group" aria-label="...">
                       <a href="{{ url_for('main.delete_user_page', user_id=user.id) }}"><i class="fa fa-remove"></i></a>

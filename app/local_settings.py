@@ -26,7 +26,6 @@ MAIL_USE_TLS = True
 MAIL_USERNAME = 'you@gmail.com'
 MAIL_PASSWORD = 'yourpassword'
 MAIL_DEFAULT_SENDER = '"You" <you@gmail.com>'
-
 ADMINS = [
     '"Admin One" <admin1@gmail.com>',
     ]
