@@ -1,4 +1,4 @@
-# FlaskDash starter app v0.7
+# FlaskDash starter app v0.9
 
 ![Screenshot](https://github.com/twintechlabs/flaskdash/blob/master/app/static/images/screenshot.png)
 
@@ -32,7 +32,7 @@ We assume that you have `git` and `virtualenv` and `virtualenvwrapper` installed
     # Clone the code repository into ~/dev/my_app
     mkdir -p ~/dev
     cd ~/dev
-    git clone https://github.com/lingthio/Flask-User-starter-app.git my_app
+    git clone https://github.com/twintechlabs/flaskdash.git my_app
 
     # Create the 'my_app' virtual environment
     mkvirtualenv -p PATH/TO/PYTHON my_app
