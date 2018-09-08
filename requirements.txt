@@ -2,10 +2,10 @@
 # Usage: pip install -r requirements.txt
 
 # Flask Framework
-Flask==0.12
+Flask==1.0.2
 
 # Flask Packages
-Flask-Login==0.4.0
+Flask-Login==0.4.1
 Flask-Migrate==2.0.2
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
