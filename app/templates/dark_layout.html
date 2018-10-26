@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Twin Tech Labs - CoreUI Flask Admin</title>
+        <title>{{ config['APP_NAME'] }}</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -17,16 +17,21 @@
         <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 
         <!-- javascript -->
+        <!--
         <script src="{{ url_for('static', filename='js/popper.js/dist/umd/popper.min.js') }}"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+        -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
         <script src="{{ url_for('static', filename='js/pace-progress/pace.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/@coreui/coreui/dist/js/coreui.min.js') }}"></script>
 
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/exporting.js"></script>
-        <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
     </head>
     <body>
         {% block body %}
@@ -36,7 +41,7 @@
               <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand" href="{{ url_for('main.member_page') }}">
-              FlaskDash
+              {{ config['APP_NAME'] }}
             </a>
             <a class="nav-link nav-link--rounded pull-right" style="margin-right: 10px;" href="{{ url_for('user.logout') }}">
               Sign out
@@ -66,15 +71,21 @@
                       </li>
                     </ul>
                   </li>
+
+                  {% if current_user.has_role('admin') %}
                   <li class="nav-title">Administration</li>
                   <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('main.user_admin_page') }}">
                       <i class="nav-icon icon-drop"></i> Manage Users</a>
                   </li>
+                  {% endif %}
+
                 </ul>
               </nav>
             </div>
+
           {% block pre_content %}{% endblock %}
+
           <main class="main">
           {# One-time system messages called Flash messages #}
           {% block flash_messages %}
@@ -90,14 +101,40 @@
               {%- endwith %}
           {% endblock %}
 
-          {% block content %}{% endblock %}
+          <!-- Breadcrumb-->
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item">
+              <a href="#">Admin</a>
+            </li>
+            <li class="breadcrumb-item active">Dashboard</li>
+            <!-- Breadcrumb Menu-->
+            <li class="breadcrumb-menu d-md-down-none">
+              <div class="btn-group" role="group" aria-label="Button group">
+                <a class="btn" href="#">
+                  <i class="icon-speech"></i>
+                </a>
+                <a class="btn" href="./">
+                  <i class="icon-graph"></i>  Dashboard</a>
+                <a class="btn" href="#">
+                  <i class="icon-settings"></i>  Settings</a>
+              </div>
+            </li>
+          </ol>
+
+          <div class="container-fluid">
+            <div class="animated fadeIn">
+              {% block content %}{% endblock %}
+            </div>
+          </div>
+
           </main>
           {% block post_content %}{% endblock %}
 
         {% endblock %}
         </div>
         <footer class="app-footer">
-          <div>FlaskDash &copy; 2018 Twin Tech Labs</div>
+          <div>{{ config['APP_NAME'] }} &copy; 2018 {{ config['APP_OWNER_NAME'] }}</div>
           <div class="ml-auto">
             <span>Powered by</span>
             <a href="https://coreui.io">CoreUI</a>
@@ -111,7 +148,9 @@
                 $(".alert").fadeTo(4000, 500).slideUp(500, function(){
                     $(".alert").slideUp(500);
                 });
+                {% block onstart_javascript %}{% endblock %}
             })();
+            {% block page_load_javascript %}{% endblock %}
         </script>
     </body>
 </html>
