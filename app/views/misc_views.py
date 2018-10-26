@@ -24,7 +24,7 @@ def member_page():
 @main_blueprint.route('/admin')
 @roles_accepted('admin')  # Limits access to users with the 'admin' role
 def admin_page():
-    return render_template('pages/admin_page.html')
+    return render_template('pages/admin/users.html')
 
 @main_blueprint.route('/users')
 @roles_accepted('admin')
