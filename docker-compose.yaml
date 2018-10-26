@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile.app
+    environment:
+      - CELERY_BROKER=rabbitmq
+      - SQLALCHEMY_DATABASE_URI=postgres://dbuser:dbpassword@postgres/dbname
+      - ADMIN_EMAIL=admin@example.com
+      - ADMIN_PASSWORD=Password1
+      - USER_EMAIL=user@example.com
+      - USER_PASSWORD=Password1
+      - SECRET_KEY=NotSecure
+    ports:
+      - "80:80"
+      - "5000:5000"
+    volumes:
+      - ./docker/app/uwsgi.ini:/app/uwsgi.ini
+      - ./docker/app/prestart.sh:/app/prestart.sh
+      - ./app:/app/app
+      - ./manage.py:/app/manage.py
+      - ./unicorn.py:/app/unicorn.py
+      - ~/.aws/credentials:/home/dicom_proxy/.aws/credentials
+      - ~/.aws/config:/home/apprunner/.aws/config
+
+
+  worker:
+    build:
+      context: .
+      dockerfile: dockerfile.worker
+    environment:
+      - CELERY_BROKER=rabbitmq
+      - SQLALCHEMY_DATABASE_URI=postgres://dbuser:dbpassword@postgres/dbname
+      - ADMIN_EMAIL=admin@example.com
+      - ADMIN_PASSWORD=Password1
+      - USER_EMAIL=user@example.com
+      - USER_PASSWORD=Password1
+      - SECRET_KEY=NotSecure
+    volumes:
+      - ./app:/app/app
+      - ./docker/worker/start_worker.sh:/home/apprunner/start_worker.sh
+      - ~/.aws/credentials:/home/apprunner/.aws/credentials
+      - ~/.aws/config:/home/apprunner/.aws/config
+
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpassword
+      POSTGRES_DB: dbname
+
+  rabbitmq:
+    image: rabbitmq
