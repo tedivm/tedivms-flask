@@ -27,10 +27,12 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.Unicode(50), nullable=False, server_default=u'')
 
     # Relationships
-    roles = db.relationship('Role', secondary='users_roles',
-                            backref=db.backref('users', lazy='dynamic'))
+    roles = db.relationship('Role', secondary='users_roles', backref=db.backref('users', lazy='dynamic'))
+
     def has_role(self, role):
         for item in self.roles:
+            if item.name == role:
+                return True
             if item.name == 'admin':
                 return True
         return False
