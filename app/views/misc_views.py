@@ -66,7 +66,7 @@ def delete_user_page():
         flash('You successfully deleted your user!', 'success')
         return redirect(url_for('main.user_admin_page'))
     except Exception as e:
-        flash('Opps!  Something unexpected happened.  On the brightside, we logged the error and will absolutely look at it and work to correct it, ASAP.', 'error')
+        flash('Oops!  Something unexpected happened.  On the brightside, we logged the error and will absolutely look at it and work to correct it.', 'error')
         return redirect(request.referrer)
 
 @main_blueprint.route('/pages/profile', methods=['GET', 'POST'])
