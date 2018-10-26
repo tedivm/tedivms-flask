@@ -4,15 +4,22 @@
 # __init__.py is a special Python file that allows a directory to become
 # a Python package so it can be accessed using the 'import' statement.
 
+import boto3
+from celery import Celery
 from datetime import datetime
 import os
 
 from flask import Flask
 from flask_mail import Mail
 from flask_migrate import Migrate, MigrateCommand
+from flask.sessions import SessionInterface
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import UserManager, UserMixin
 from flask_wtf.csrf import CSRFProtect
+
+from beaker.cache import CacheManager
+from beaker.util import parse_cache_config_options
+from beaker.middleware import SessionMiddleware
 
 # Instantiate Flask extensions
 db = SQLAlchemy()
@@ -21,17 +28,51 @@ mail = Mail()
 migrate = Migrate()
 
 
-def create_app(extra_config_settings={}):
-    """Create a Flask applicaction.
-    """
+def get_config():
     # Instantiate Flask
     app = Flask(__name__)
 
     # Load App Config settings
     # Load common settings from 'app/settings.py' file
     app.config.from_object('app.settings')
-    # Load local settings from 'app/local_settings.py'
-    app.config.from_object('app.local_settings')
+    # Load local settings from environmental variable
+    if 'APPLICATION_SETTINGS' in os.environ:
+        app.config.from_envvar(os.environ['APPLICATION_SETTINGS'])
+    # Load extra config settings from the AWS Secrets Manager
+    if 'AWS_SECRETS_MANAGER_CONFIG' in os.environ:
+        secret_config = get_secrets(os.environ['AWS_SECRETS_MANAGER_CONFIG'])
+        app.config.update(secret_config)
+    elif 'AWS_SECRETS_MANAGER_CONFIG' in app.config:
+        secret_config = get_secrets(app.config['AWS_SECRETS_MANAGER_CONFIG'])
+        app.config.update(secret_config)
+    # Load extra config settings from environment- note that the config key must exist in app.config to get picked up
+    for setting in app.config:
+        if setting in os.environ:
+            if os.environ[setting].lower() == 'true':
+                app.config[setting] = True
+            elif os.environ[setting].lower() == 'true':
+                app.config[setting] = False
+            else:
+                app.config[setting] = os.environ[setting]
+    return app.config
+
+# We need the base configuration to setup services before the app is created.
+base_config = get_config()
+
+# Initiate Services
+celery = Celery(__name__, broker=base_config['CELERY_BROKER'])
+cache = None # Initiate below, but define here for scope reasons.
+
+
+def create_app(extra_config_settings={}):
+    """Create a Flask applicaction.
+    """
+    # Instantiate Flask
+    app = Flask(__name__)
+
+    # Load extra config settings from 'extra_config_settings' param
+    base_config = get_config()
+    app.config.update(base_config)
     # Load extra config settings from 'extra_config_settings' param
     app.config.update(extra_config_settings)
 
@@ -49,13 +90,23 @@ def create_app(extra_config_settings={}):
     # Setup WTForms CSRFProtect
     csrf_protect.init_app(app)
 
+    # Setup Cache
+    cache = init_cache_manager(app)
+
+    # Setup Session Manager
+    init_session_manager(app)
+
+    # Setup Celery
+    init_celery_service(app)
+
+
     # Register blueprints
     from app.views.misc_views import main_blueprint
     from app.views.apis import api_blueprint
     app.register_blueprint(main_blueprint)
     app.register_blueprint(api_blueprint)
     csrf_protect.exempt(api_blueprint)
-    
+
     # Register blueprints
     from app.views.misc_views import main_blueprint
     app.register_blueprint(main_blueprint)
@@ -69,7 +120,8 @@ def create_app(extra_config_settings={}):
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Setup an error-logger to send emails to app.config.ADMINS
-    init_email_error_handler(app)
+    if 'MAIL_SERVER' in app.config and 'ADMINS' in app.config:
+        init_email_error_handler(app)
 
     # Setup Flask-User to handle user account related forms
     from .models.user_models import User, MyRegisterForm
@@ -117,5 +169,95 @@ def init_email_error_handler(app):
     # Log errors using: app.logger.error('Some error message')
 
 
+def init_cache_manager(app):
+    cache_opts = {'cache.expire': app.config.get('CACHE_EXPIRE', 3600)}
+
+    if 'CACHE_TYPE' not in app.config or not app.config['CACHE_TYPE']:
+        app.config['CACHE_TYPE'] = 'file'
+
+    if app.config['CACHE_TYPE'] is 'file':
+        if 'CACHE_ROOT' not in app.config or not app.config['CACHE_ROOT']:
+            app.config['CACHE_ROOT'] = '/tmp/%s' % __name__
+
+    cache_opts['cache.type'] = app.config['CACHE_TYPE']
+
+    if 'CACHE_ROOT' in app.config and app.config['CACHE_ROOT']:
+        cache_opts['cache.data_dir'] = app.config['CACHE_ROOT'] + '/data'
+        cache_opts['cache.lock_dir'] = app.config['CACHE_ROOT'] + '/lock'
+
+    if 'CACHE_URL' in app.config and app.config['CACHE_URL']:
+        cache_opts['cache.url'] = app.config['CACHE_URL']
 
 
+    cache = CacheManager(**parse_cache_config_options(cache_opts))
+
+
+def init_session_manager(app):
+    session_opts = {'cache.expire': 3600}
+
+    if 'CACHE_TYPE' not in app.config or not app.config['CACHE_TYPE']:
+        app.config['CACHE_TYPE'] = 'file'
+
+    if app.config['CACHE_TYPE'] == 'file':
+        if 'CACHE_ROOT' not in app.config or not app.config['CACHE_ROOT']:
+            app.config['CACHE_ROOT'] = '/tmp/%s' % __name__
+
+    session_opts['session.type'] = app.config['CACHE_TYPE']
+
+    if 'CACHE_ROOT' in app.config and app.config['CACHE_ROOT']:
+        session_opts['session.data_dir'] = app.config['CACHE_ROOT'] + '/session'
+
+    if 'CACHE_URL' in app.config and app.config['CACHE_URL']:
+        session_opts['session.url'] = app.config['CACHE_URL']
+
+    session_opts['session.auto'] = app.config.get('SESSION_AUTO', True)
+    session_opts['session.cookie_expires'] = app.config.get('SESSION_COOKIE_EXPIRES', 86400)
+    session_opts['session.secret'] = app.secret_key
+
+    class BeakerSessionInterface(SessionInterface):
+        def open_session(self, app, request):
+            session = request.environ['beaker.session']
+            return session
+
+        def save_session(self, app, session, response):
+            session.save()
+
+    app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
+    app.session_interface = BeakerSessionInterface()
+
+
+def init_celery_service(app):
+    celery.conf.update(app.config)
+
+
+def get_secrets(secret_name, region=False):
+    if not region:
+        region = get_region()
+    client = boto3.client(service_name='secretsmanager', region_name=region)
+
+    # Depending on whether the secret was a string or binary, one of these fields will be populated
+    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+    if 'SecretString' in get_secret_value_response:
+        secret = get_secret_value_response['SecretString']
+    else:
+        secret = get_secret_value_response['SecretBinary'].decode("utf-8")
+
+    return yaml.load(secret)
+
+
+def get_secret_region():
+    """Extrapolate the preferred region when one isn't supplied"""
+    # Check for specific environmental variable.
+    if 'AWS_SECRETS_REGION' in os.environ:
+        return os.environ['AWS_SECRETS_REGION']
+
+    # Check for boto3/awscli default region.
+    boto3_session = boto3.session.Session()
+    if boto3_session.region_name:
+        return boto3_session.region_name
+
+    # If this is being called from an EC2 instance use its region.
+    r = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document', timeout=0.2)
+    r.raise_for_status()
+    data = r.json()
+    return data['region']

@@ -5,14 +5,28 @@
 import os
 
 # Application settings
-APP_NAME = "Admin Flask Starter App"
+APP_NAME = "Flask Starter"
 APP_SYSTEM_ERROR_SUBJECT_LINE = APP_NAME + " system error"
+APP_OWNER_NAME = "Change this in settings."
 
 # Flask settings
 CSRF_ENABLED = True
+SECRET_KEY = None
 
 # Flask-SQLAlchemy settings
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_DATABASE_URI = 'sqlite:///app.sqlite'
+
+# Celery Configuration
+CELERY_BROKER = False
+CELERY_RESULTS = False
+
+# Cache
+CACHE_TYPE = False
+CACHE_ROOT = False
+CACHE_URL = False
+
+
 
 # Flask-User settings
 USER_APP_NAME = APP_NAME
@@ -27,3 +41,18 @@ USER_ENABLE_USERNAME = False  # Register and Login with username
 USER_AFTER_LOGIN_ENDPOINT = 'main.member_page'
 USER_AFTER_LOGOUT_ENDPOINT = 'main.member_page'
 USER_ALLOW_LOGIN_WITHOUT_CONFIRMED_EMAIL = False
+
+
+# Flask-Mail settings
+# For smtp.gmail.com to work, you MUST set "Allow less secure apps" to ON in Google Accounts.
+# Change it in https://myaccount.google.com/security#connectedapps (near the bottom).
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 587
+MAIL_USE_SSL = False
+MAIL_USE_TLS = True
+MAIL_USERNAME = 'you@gmail.com'
+MAIL_PASSWORD = 'yourpassword'
+MAIL_DEFAULT_SENDER = '"You" <you@gmail.com>'
+ADMINS = [
+    '"Admin One" <admin1@gmail.com>',
+    ]
