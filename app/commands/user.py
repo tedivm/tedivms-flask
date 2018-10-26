@@ -7,22 +7,9 @@
 import datetime
 
 from flask import current_app
-from flask_script import Command
 
 from app import db
 from app.models.user_models import User, Role
-
-class InitDbCommand(Command):
-    """ Initialize the database."""
-
-    def run(self):
-        init_db()
-
-def init_db():
-    """ Initialize the database."""
-    db.drop_all()
-    db.create_all()
-    create_users()
 
 
 def create_users():
@@ -48,6 +35,7 @@ def find_or_create_role(name, label):
     if not role:
         role = Role(name=name, label=label)
         db.session.add(role)
+        db.session.commit()
     return role
 
 
@@ -64,7 +52,5 @@ def find_or_create_user(first_name, last_name, email, password, role=None):
         if role:
             user.roles.append(role)
         db.session.add(user)
+        db.session.commit()
     return user
-
-
-
