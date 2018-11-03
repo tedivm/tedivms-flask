@@ -11,6 +11,7 @@ wait_for_service() {
   done
 }
 
+echo 'Setting up configuration and waiting for services.'
 
 # If there are AWS credentials configured make sure they're available to the root user as well.
 # This is only needed in testing, as IAM Roles are used for production.
@@ -29,6 +30,7 @@ if [[ -n $AWS_SECRETS_MANAGER_CONFIG ]]; then
   fi
 fi
 
+
 # Wait for configured services to become available.
 if [[ -n "$CELERY_BROKER" ]]; then
   wait_for_service $CELERY_BROKER 5672
@@ -37,18 +39,27 @@ if [[ -n "$SQLALCHEMY_DATABASE_URI" ]]; then
   wait_for_service $SQLALCHEMY_DATABASE_URI 5432
 fi
 
-
+set -e
 echo 'Performing any database migrations.'
 python manage.py db upgrade
 
+if [ ! -f ~/.hasrun ]; then
+  echo 'Setting up initial roles and users if they do not exist.'
+  python manage.py add-role admin Admin
+  python manage.py add-role dev Developer
+  python manage.py add-role user User
 
-echo 'Setting up initial roles and users if they do not exist.'
-python manage.py add-role admin Admin
+  if [[ -n $ADMIN_EMAIL ]] && [[ -n $ADMIN_PASSWORD ]]; then
+    python manage.py add-user $ADMIN_EMAIL $ADMIN_PASSWORD admin
+  fi
 
-if [[ -n $ADMIN_EMAIL ]] && [[ -n $ADMIN_PASSWORD ]]; then
-  python manage.py add-user $ADMIN_EMAIL $ADMIN_PASSWORD admin
-fi
+  if [[ -n $DEV_EMAIL ]] && [[ -n $DEV_PASSWORD ]]; then
+    python manage.py add-user $DEV_EMAIL $DEV_PASSWORD dev
+  fi
 
-if [[ -n $USER_EMAIL ]] && [[ -n $USER_PASSWORD ]]; then
-  python manage.py add-user $USER_EMAIL $USER_PASSWORD
+  if [[ -n $USER_EMAIL ]] && [[ -n $USER_PASSWORD ]]; then
+    python manage.py add-user $USER_EMAIL $USER_PASSWORD user
+  fi
+
+  touch ~/.hasrun
 fi

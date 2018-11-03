@@ -10,6 +10,8 @@ services:
       - SQLALCHEMY_DATABASE_URI=postgres://dbuser:dbpassword@postgres/dbname
       - ADMIN_EMAIL=admin@example.com
       - ADMIN_PASSWORD=Password1
+      - DEV_EMAIL=dev@example.com
+      - DEV_PASSWORD=Password1
       - USER_EMAIL=user@example.com
       - USER_PASSWORD=Password1
       - SECRET_KEY=NotSecure
