@@ -1,0 +1,23 @@
+{% extends "common/dark_base.html" %}  {# common/page_base.html extends layout.html #}
+{% block title %}Delete API Key {{ key_id }}{% endblock %}
+{% block breadcrumb %}
+<li class="breadcrumb-item active">
+  <a href="{{ url_for('apikeys.apikeys_index') }}">API Keys</a>
+</li>
+{% endblock %}
+{% block content %}
+{% from "common/form_macros.html" import render_field %}
+<div class="card ">
+  <form action="" method="POST" class="form" role="form">
+    <div class="card-header ">
+      <strong>Delete Key {{ key_id }}</strong>
+    </div>
+    <div class="card-body ">
+          {{ form.hidden_tag() }}
+    </div>
+    <div class="card-footer ">
+      <button type="submit " class="btn btn-sm btn-primary "><i class="fa fa-dot-circle-o "></i> Delete</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

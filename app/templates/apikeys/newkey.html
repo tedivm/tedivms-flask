@@ -1,0 +1,34 @@
+{% extends "common/dark_base.html" %}  {# common/page_base.html extends layout.html #}
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+  <a href="{{ url_for('apikeys.apikeys_index') }}">API Keys</a>
+</li>
+{% endblock %}
+{% block title %}Your new API Key{% endblock %}
+{% block content %}
+<div class="card ">
+    <div class="card-header ">
+      <strong>Your new API Key</strong>
+    </div>
+    <div class="card-body ">
+      <table class="table table-hover table-striped" style="padding-top: 50px;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Key</th>
+            <th>Label</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ id }}</td>
+            <td>{{ key }}</td>
+            <td>{{ label }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer ">
+    </div>
+</div>
+{% endblock %}

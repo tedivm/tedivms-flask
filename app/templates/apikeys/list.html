@@ -1,0 +1,40 @@
+{% extends "common/dark_base.html" %}  {# common/page_base.html extends layout.html #}
+{% block breadcrumb %}
+<li class="breadcrumb-item active">
+  <a href="{{ url_for('apikeys.apikeys_index') }}">API Keys</a>
+</li>
+{% endblock %}
+{% block content %}
+<div class="card ">
+    <div class="card-header ">
+      <strong>API Keys</strong>
+      <a href={{ url_for('apikeys.apikeys_create') }} class="btn btn-pill btn-sm btn-primary pull-right">Create Key</a>
+    </div>
+    <div class="card-body ">
+      <table class="table table-hover table-striped" style="padding-top: 50px;">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Label</th>
+            <th>Control</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key in keys %}
+          <tr>
+            <td>{{ key.id }}</td>
+            <td>{{ key.label }}</td>
+            <td>
+              <div class="btn-group" role="group" aria-label="...">
+                <a href="{{ url_for('apikeys.apikeys_delete', key_id=key.id) }}"><i class="fa fa-remove"></i></a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer ">
+    </div>
+</div>
+{% endblock %}
