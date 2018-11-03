@@ -22,6 +22,8 @@ RUN apt-get update \
 
 ADD ./docker/app/uwsgi.ini /app/uwsgi.ini
 ADD ./docker/app/prestart.sh /app/prestart.sh
+ADD ./docker/app/nginx_overrides.conf /etc/nginx/conf.d/nginx_overrides.conf
+
 
 ADD ./migrations/ /app/migrations
 ADD ./app/ /app/app
