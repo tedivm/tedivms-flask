@@ -5,7 +5,7 @@ wait_for_service() {
   PORT=$(urlparser port $1 || echo $2)
   until nc -w 5 -z $HOSTNAME $PORT
   do
-    echo "Waiting for $1 to come online at $HOSTNAME $PORT"
+    echo "Waiting for service to come online at $HOSTNAME $PORT"
     sleep 5
   done
 }
