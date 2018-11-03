@@ -15,6 +15,7 @@ services:
       - USER_EMAIL=user@example.com
       - USER_PASSWORD=Password1
       - SECRET_KEY=NotSecure
+      - DEBUG=true
     ports:
       - "80:80"
       - "5000:5000"
