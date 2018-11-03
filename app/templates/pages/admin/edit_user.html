@@ -3,9 +3,6 @@
 <li class="breadcrumb-item">
   <a href="{{ url_for('main.user_admin_page') }}">Manage Users</a>
 </li>
-<li class="breadcrumb-item active">
-  <a href="{{ url_for('main.create_user_page') }}">Create User</a>
-</li>
 {% endblock %}
 {% block content %}
 
@@ -15,7 +12,7 @@
       <div class="card ">
         <form action="" method="POST" class="form" role="form">
           <div class="card-header ">
-            <strong>Create User</strong>
+            <strong>Edit User</strong>
           </div>
           <div class="card-body ">
                 {{ form.hidden_tag() }}

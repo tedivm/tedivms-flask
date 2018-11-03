@@ -1,19 +1,22 @@
 {% extends "common/dark_base.html" %}  {# common/page_base.html extends layout.html #}
-
+{% block breadcrumb %}
+<li class="breadcrumb-item active">
+  <a href="{{ url_for('main.user_admin_page') }}">Manage Users</a>
+</li>
+{% endblock %}
 {% block content %}
-{% from "common/form_macros.html" import render_field, render_submit_field %}
 <div class="card ">
     <div class="card-header ">
-      <strong>System Users</strong>
+      <strong>Users</strong>
       <a href={{ url_for('main.create_user_page') }} class="btn btn-pill btn-sm btn-primary pull-right">Create User</a>
     </div>
     <div class="card-body ">
       <table class="table table-hover table-striped" style="padding-top: 50px;">
         <thead>
           <tr>
+            <th>Email</th>
             <th>Name</th>
             <th>Role</th>
-            <th>Email</th>
             <th>Confirmed</th>
             <th>Actions</th>
           </tr>
@@ -21,15 +24,18 @@
         <tbody>
           {% for user in users %}
           <tr>
-            <td>{{user.name()}}</td>
-            <td>{{user.role()}}</td>
             <td>{{user.email}}</td>
+            <td>{{user.name()}}</td>
+            <td>{% for role in user.roles %}{{ role.name }}{{ ", " if not loop.last }}{% endfor %}</td>
             <td>{{user.email_confirmed_at}}</td>
-            <tD>
+            <td>
+              <div class="btn-group" role="group" aria-label="...">
+                <a href="{{ url_for('main.edit_user_page', user_id=user.id) }}"><i class="fa fa-pencil"></i></a>
+              </div>
               <div class="btn-group" role="group" aria-label="...">
                 <a href="{{ url_for('main.delete_user_page', user_id=user.id) }}"><i class="fa fa-remove"></i></a>
               </div>
-            </tD>
+            </td>
           </tr>
           {% endfor %}
         </tbody>

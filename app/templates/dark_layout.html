@@ -51,12 +51,7 @@
             <div class="sidebar">
               <nav class="sidebar-nav">
                 <ul class="nav">
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('main.member_page') }}">
-                      <i class="nav-icon icon-speedometer"></i> Dashboard
-                      <span class="badge badge-primary">NEW</span>
-                    </a>
-                  </li>
+
                   <li class="nav-item nav-dropdown">
                     <a class="nav-link nav-dropdown-toggle" href="#">
                       <i class="nav-icon icon-bell"></i> My Account</a>
@@ -65,10 +60,19 @@
                         <a class="nav-link" href="{{ url_for('main.user_profile_page') }}">
                           <i class="nav-icon icon-drop"></i> Profile</a>
                       </li>
+
                       <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('user.change_password') }}">
                           <i class="nav-icon icon-drop"></i> Password</a>
                       </li>
+
+                      {% if current_user.has_role('admin') or current_user.has_role('dev') %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('apikeys.apikeys_index') }}">
+                          <i class="nav-icon icon-drop"></i> API Keys</a>
+                      </li>
+                      {% endif %}
+
                     </ul>
                   </li>
 
@@ -103,23 +107,8 @@
 
           <!-- Breadcrumb-->
           <ol class="breadcrumb">
-            <li class="breadcrumb-item">Home</li>
-            <li class="breadcrumb-item">
-              <a href="#">Admin</a>
-            </li>
-            <li class="breadcrumb-item active">Dashboard</li>
-            <!-- Breadcrumb Menu-->
-            <li class="breadcrumb-menu d-md-down-none">
-              <div class="btn-group" role="group" aria-label="Button group">
-                <a class="btn" href="#">
-                  <i class="icon-speech"></i>
-                </a>
-                <a class="btn" href="./">
-                  <i class="icon-graph"></i>  Dashboard</a>
-                <a class="btn" href="#">
-                  <i class="icon-settings"></i>  Settings</a>
-              </div>
-            </li>
+            {% block breadcrumb %}
+            {% endblock %}
           </ol>
 
           <div class="container-fluid">

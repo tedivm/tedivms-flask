@@ -5,8 +5,9 @@
 from flask_user import UserMixin
 from flask_user.forms import RegisterForm
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, validators
+from wtforms import StringField, SubmitField, validators, PasswordField, BooleanField
 from app import db
+from app.utils.forms import MultiCheckboxField
 
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!
@@ -29,11 +30,14 @@ class User(db.Model, UserMixin):
     # Relationships
     roles = db.relationship('Role', secondary='users_roles', backref=db.backref('users', lazy='dynamic'))
 
-    def has_role(self, role):
+    # API Keys
+    apikeys = db.relationship('ApiKey', backref='user')
+
+    def has_role(self, role, allow_admin=True):
         for item in self.roles:
             if item.name == role:
                 return True
-            if item.name == 'admin':
+            if allow_admin and item.name == 'admin':
                 return True
         return False
 
@@ -44,6 +48,15 @@ class User(db.Model, UserMixin):
 
     def name(self):
         return self.first_name + " " + self.last_name
+
+
+
+class ApiKey(db.Model):
+    __tablename__ = 'api_keys'
+    id = db.Column(db.Unicode(255), primary_key=True, unique=True)
+    hash = db.Column(db.Unicode(255), nullable=False)
+    label = db.Column(db.Unicode(255), nullable=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
 
 
 # Define the Role data model
@@ -65,16 +78,23 @@ class UsersRoles(db.Model):
 # Define the User registration form
 # It augments the Flask-User RegisterForm with additional fields
 class MyRegisterForm(RegisterForm):
-    first_name = StringField('First name', validators=[
-        validators.DataRequired('First name is required')])
-    last_name = StringField('Last name', validators=[
-        validators.DataRequired('Last name is required')])
+    first_name = StringField('First name', validators=[ validators.DataRequired('First name is required')])
+    last_name = StringField('Last name', validators=[ validators.DataRequired('Last name is required')])
 
 
 # Define the User profile form
 class UserProfileForm(FlaskForm):
-    first_name = StringField('First name', validators=[
-        validators.DataRequired('First name is required')])
-    last_name = StringField('Last name', validators=[
-        validators.DataRequired('Last name is required')])
+    first_name = StringField('First name', validators=[])
+    last_name = StringField('Last name', validators=[])
+    email = StringField('Email', validators=[validators.DataRequired('Last name is required')])
+    password = PasswordField('Password', validators=[])
+    roles = MultiCheckboxField('Roles', coerce=int)
+    active = BooleanField('Active')
+    submit = SubmitField('Save')
+
+
+
+# Define the User profile form
+class ApiKeyForm(FlaskForm):
+    label = StringField('Key Label', validators=[validators.DataRequired('Key Label is required')])
     submit = SubmitField('Save')

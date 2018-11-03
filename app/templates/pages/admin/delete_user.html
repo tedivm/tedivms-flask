@@ -9,22 +9,17 @@
 {% endblock %}
 {% block content %}
 
-{% from "common/form_macros.html" import render_field, render_checkbox_field, render_multicheckbox_field %}
+{% from "common/form_macros.html" import render_field, render_submit_field %}
   <div class="container-fluid">
     <div class="animated fadeIn">
       <div class="card ">
         <form action="" method="POST" class="form" role="form">
           <div class="card-header ">
-            <strong>Create User</strong>
+            <strong>Delete User</strong>
           </div>
           <div class="card-body ">
-                {{ form.hidden_tag() }}
-                {{ render_field(form.first_name) }}
-                {{ render_field(form.last_name) }}
-                {{ render_field(form.email) }}
-                {{ render_field(form.password) }}
-                {{ render_checkbox_field(form.active) }}
-                {{ render_multicheckbox_field(form.roles) }}
+            {{ form.hidden_tag() }}
+            Are you sure you want to delete this user?
           </div>
           <div class="card-footer ">
             <button type="submit " class="btn btn-sm btn-primary "><i class="fa fa-dot-circle-o "></i> Submit</button>
