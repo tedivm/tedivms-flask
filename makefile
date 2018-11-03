@@ -30,3 +30,15 @@ clean: clean_testenv
 	# Remove existing environment
 	rm -rf $(ROOT_DIR)/env;
 	rm -rf $(ROOT_DIR)/$(APP_NAME)/*.pyc;
+
+upgrade_models:
+	rm -rf $(ROOT_DIR)/app.sqlite;
+	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db upgrade
+	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db migrate
+	rm -rf $(ROOT_DIR)/app.sqlite;
+
+init_db:
+	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db init
+	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db upgrade
+	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db migrate
+	rm -rf $(ROOT_DIR)/app.sqlite;
