@@ -22,7 +22,7 @@ boto3==1.9.31
 celery==4.2.0
 click==7.0
 psycopg2-binary==2.7.5
-
+pyyaml==3.13
 
 # Development tools
 # tox==3.5.2

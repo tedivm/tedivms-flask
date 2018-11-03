@@ -8,6 +8,7 @@ import boto3
 from celery import Celery
 from datetime import datetime
 import os
+import yaml
 
 from flask import Flask
 from flask_mail import Mail
@@ -50,11 +51,45 @@ def get_config():
         if setting in os.environ:
             if os.environ[setting].lower() == 'true':
                 app.config[setting] = True
-            elif os.environ[setting].lower() == 'true':
+            elif os.environ[setting].lower() == 'false':
                 app.config[setting] = False
             else:
                 app.config[setting] = os.environ[setting]
     return app.config
+
+
+def get_secrets(secret_name, region=False):
+    if not region:
+        region = get_secret_region()
+    client = boto3.client(service_name='secretsmanager', region_name=region)
+
+    # Depending on whether the secret was a string or binary, one of these fields will be populated
+    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+    if 'SecretString' in get_secret_value_response:
+        secret = get_secret_value_response['SecretString']
+    else:
+        secret = get_secret_value_response['SecretBinary'].decode("utf-8")
+
+    return yaml.load(secret)
+
+
+def get_secret_region():
+    """Extrapolate the preferred region when one isn't supplied"""
+    # Check for specific environmental variable.
+    if 'AWS_SECRETS_REGION' in os.environ:
+        return os.environ['AWS_SECRETS_REGION']
+
+    # Check for boto3/awscli default region.
+    boto3_session = boto3.session.Session()
+    if boto3_session.region_name:
+        return boto3_session.region_name
+
+    # If this is being called from an EC2 instance use its region.
+    r = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document', timeout=0.2)
+    r.raise_for_status()
+    data = r.json()
+    return data['region']
+
 
 # We need the base configuration to setup services before the app is created.
 base_config = get_config()
@@ -102,14 +137,15 @@ def create_app(extra_config_settings={}):
 
     # Register blueprints
     from app.views.misc_views import main_blueprint
-    from app.views.apis import api_blueprint
     app.register_blueprint(main_blueprint)
+
+    from app.views.apikeys import apikeys_blueprint
+    app.register_blueprint(apikeys_blueprint)
+
+    from app.views.apis import api_blueprint
     app.register_blueprint(api_blueprint)
     csrf_protect.exempt(api_blueprint)
 
-    # Register blueprints
-    from app.views.misc_views import main_blueprint
-    app.register_blueprint(main_blueprint)
 
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
     from wtforms.fields import HiddenField
@@ -120,8 +156,9 @@ def create_app(extra_config_settings={}):
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Setup an error-logger to send emails to app.config.ADMINS
-    if 'MAIL_SERVER' in app.config and 'ADMINS' in app.config:
-        init_email_error_handler(app)
+    if 'DEBUG' not in app.config or not app.config['DEBUG']:
+        if 'MAIL_SERVER' in app.config and 'ADMINS' in app.config:
+            init_email_error_handler(app)
 
     # Setup Flask-User to handle user account related forms
     from .models.user_models import User, MyRegisterForm
@@ -228,36 +265,3 @@ def init_session_manager(app):
 
 def init_celery_service(app):
     celery.conf.update(app.config)
-
-
-def get_secrets(secret_name, region=False):
-    if not region:
-        region = get_region()
-    client = boto3.client(service_name='secretsmanager', region_name=region)
-
-    # Depending on whether the secret was a string or binary, one of these fields will be populated
-    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-    if 'SecretString' in get_secret_value_response:
-        secret = get_secret_value_response['SecretString']
-    else:
-        secret = get_secret_value_response['SecretBinary'].decode("utf-8")
-
-    return yaml.load(secret)
-
-
-def get_secret_region():
-    """Extrapolate the preferred region when one isn't supplied"""
-    # Check for specific environmental variable.
-    if 'AWS_SECRETS_REGION' in os.environ:
-        return os.environ['AWS_SECRETS_REGION']
-
-    # Check for boto3/awscli default region.
-    boto3_session = boto3.session.Session()
-    if boto3_session.region_name:
-        return boto3_session.region_name
-
-    # If this is being called from an EC2 instance use its region.
-    r = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document', timeout=0.2)
-    r.raise_for_status()
-    data = r.json()
-    return data['region']
