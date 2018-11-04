@@ -49,17 +49,23 @@ We assume that you have `make` and `docker`.
     docker-compose exec app /bin/bash
 
 
-# Configuring SMTP
+## Configuration
 
-Edit the `local_settings.py` file.
+### Application configuration
 
-Specifically set all the MAIL_... settings to match your SMTP settings
+To set default configuration values on the application level- such as the application name and author- edit `./app/settings.py`. This should be done as a first step whenever using this application template.
 
-Note that Google's SMTP server requires the configuration of "less secure apps".
-See https://support.google.com/accounts/answer/6010255?hl=en
+### Configuration File
 
-Note that Yahoo's SMTP server requires the configuration of "Allow apps that use less secure sign in".
-See https://help.yahoo.com/kb/SLN27791.html
+A configuration file can be set with the environmental variable `APPLICATION_SETTINGS`.
+
+### AWS Secrets Manager
+
+Configuration can be loaded from the AWS Secrets Manager by setting the environmental variables `AWS_SECRETS_MANAGER_CONFIG` and `AWS_SECRETS_REGION`.
+
+### Environmental Variables
+
+Any environmental variables that have the same name as a configuration value in this application will automatically get loaded into the app's configuration.
 
 
 ## Initializing the Database
@@ -96,7 +102,8 @@ You can make use of the following users:
 
 ## Acknowledgements
 
-With thanks to the following Flask extensions:
+With thanks to the following Flask extensions and libraries:
+* [Celery][http://www.celeryproject.org/]
 * [CoreUI](https://coreui.io/)
 * [Alembic](http://alembic.zzzcomputing.com/)
 * [Flask](http://flask.pocoo.org/)
