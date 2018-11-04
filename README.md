@@ -11,13 +11,18 @@ API code.
 
 ## Code characteristics
 
-* Tested on Python 2.6, 2.7, 3.3, 3.4, 3.5 and 3.6
+* Tested on Python 3.3, 3.4, 3.5, 3.6, and 3.7
+* Complete docker environment.
+* Images for both the web application and the celery worker.
+* Full user management system.
+* An API system with API tokens and route decorators.
 * Well organized directories with lots of comments
     * app
         * commands
         * models
         * static
         * templates
+        * utils
         * views
     * tests
 * Includes test framework (`py.test` and `tox`)
@@ -27,20 +32,21 @@ API code.
 
 ## Setting up a development environment
 
-We assume that you have `git` and `virtualenv` and `virtualenvwrapper` installed.
+We assume that you have `make` and `docker`.
 
     # Clone the code repository into ~/dev/my_app
     mkdir -p ~/dev
     cd ~/dev
-    git clone https://github.com/twintechlabs/flaskdash.git my_app
+    git clone https://github.com/tedivm/flaskdash.git my_app
 
-    # Create the 'my_app' virtual environment
-    mkvirtualenv -p PATH/TO/PYTHON my_app
+    # Create the 'my_app' virtual environment and start docker containers
+    make testenv
 
-    # Install required Python packages
-    cd ~/dev/my_app
-    workon my_app
-    pip install -r requirements.txt
+    # Restart docker app container
+    docker-compose restart app
+
+    # Start a shell in the container running the application
+    docker-compose exec app /bin/bash
 
 
 # Configuring SMTP
@@ -58,25 +64,24 @@ See https://help.yahoo.com/kb/SLN27791.html
 
 ## Initializing the Database
 
-    # Create DB tables and populate the roles and users tables
-    python manage.py init_db
+    # Initialize the database. This will create the `migrations` folder and is only needed once per project.
+    make init_db
 
-    # Or if you have Fabric installed:
-    fab init_db
+    # This creates a new migration. It should be run whenever you change your database models.
+    make upgrade_models
 
 
 ## Running the app
 
     # Start the Flask development web server
-    python manage.py runserver
+    make testenv
 
-    # Or if you have Fabric installed:
-    fab runserver
 
 Point your web browser to http://localhost:5000/
 
 You can make use of the following users:
 - email `user@example.com` with password `Password1`.
+- email `dev@example.com` with password `Password1`.
 - email `admin@example.com` with password `Password1`.
 
 
@@ -89,11 +94,6 @@ You can make use of the following users:
     fab test
 
 
-## Trouble shooting
-
-If you make changes in the Models and run into DB schema issues, delete the sqlite DB file `app.sqlite`.
-
-
 ## Acknowledgements
 
 With thanks to the following Flask extensions:
@@ -102,12 +102,12 @@ With thanks to the following Flask extensions:
 * [Flask](http://flask.pocoo.org/)
 * [Flask-Login](https://flask-login.readthedocs.io/)
 * [Flask-Migrate](https://flask-migrate.readthedocs.io/)
-* [Flask-Script](https://flask-script.readthedocs.io/)
 * [Flask-User](http://flask-user.readthedocs.io/en/v0.6/)
 
 <!-- Please consider leaving this line. Thank you -->
-[Flask-User-starter-app](https://github.com/lingthio/Flask-User-starter-app) was used as a starting point for this code repository.
+[Flask-Dash](https://github.com/twintechlabs/flaskdash) was used as a starting point for this code repository. That project was based off of the [Flask-User-starter-app](https://github.com/lingthio/Flask-User-starter-app).
 
 ## Authors
+- Robert Hafner -- tedivm@tedivm.com
 - Matt Hogan - matt AT twintechlabs DOT io
 - Ling Thio -- ling.thio AT gmail DOT com
