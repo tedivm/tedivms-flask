@@ -31,6 +31,9 @@ clean: clean_testenv
 	rm -rf $(ROOT_DIR)/env;
 	rm -rf $(ROOT_DIR)/$(APP_NAME)/*.pyc;
 
+run_tests:
+	source $(ROOT_DIR)/env/bin/activate; py.test tests/
+
 upgrade_models:
 	rm -rf $(ROOT_DIR)/app.sqlite;
 	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db upgrade

@@ -122,11 +122,9 @@ You can make use of the following users:
 
 ## Running the automated tests
 
-    # Start the Flask development web server
-    py.test tests/
+    # To run the test suite.
+    make run_tests
 
-    # Or if you have Fabric installed:
-    fab test
 
 
 ## Acknowledgements
@@ -135,6 +133,6 @@ You can make use of the following users:
 [Flask-Dash](https://github.com/twintechlabs/flaskdash) was used as a starting point for this code repository. That project was based off of the [Flask-User-starter-app](https://github.com/lingthio/Flask-User-starter-app).
 
 ## Authors
-- Robert Hafner -- tedivm@tedivm.com
-- Matt Hogan - matt AT twintechlabs DOT io
-- Ling Thio -- ling.thio AT gmail DOT com
+- Robert Hafner (tedivms-flask) -- tedivm@tedivm.com
+- Matt Hogan (flaskdash) -- matt AT twintechlabs DOT io
+- Ling Thio (flask-user) -- ling.thio AT gmail DOT com
