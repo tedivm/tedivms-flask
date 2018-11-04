@@ -4,10 +4,8 @@
 
 This code base serves as starting point for writing your next Flask application.
 
-It's based on the awesome work of the Ling Thio and includes the open source
-CoreUI admin BootStrap theme and a number of enhancements to the base Flask
-Starter app including adding basic user management and a separate view file for
-API code.
+This package is designed to allow developers to start working on their specific features immediately while also making it simple to deploy the project into production. It contains a number of configured extensions and libraries as well as unique features specifically built for this package. It also is completely dockerized, with both a docker-compose testenv and the ability to easily make images off of the application for pushing into production.
+
 
 ## Code characteristics
 
@@ -15,6 +13,7 @@ API code.
 * Complete docker environment.
 * Images for both the web application and the celery worker.
 * Full user management system.
+* Server side session storage.
 * An API system with API tokens and route decorators.
 * Well organized directories with lots of comments
     * app
@@ -24,10 +23,40 @@ API code.
         * templates
         * utils
         * views
+    * docker
     * tests
 * Includes test framework (`py.test` and `tox`)
-* Includes database migration framework (`alembic`)
+* Includes database migration framework (`alembic`, using `Flask-Migrate`)
 * Sends error emails to admins for unhandled exceptions
+
+## Configured Extensions and Libraries
+
+With thanks to the following Flask extensions and libraries:
+* [Beaker](https://beaker.readthedocs.io/en/latest/) for caching and session management.
+* [Celery][http://www.celeryproject.org/] for running asynchronous tasks on worker nodes.
+* [Click][https://click.palletsprojects.com/] for the creation of command line tools.
+* [Flask](http://flask.pocoo.org/) the microframework framework which holds this all together.
+* [Flask-Login](https://flask-login.readthedocs.io/) allows users to login and signout.
+* [Flask-Migrate](https://flask-migrate.readthedocs.io/) integrates [Alembic](http://alembic.zzzcomputing.com/) into Flask to handle database versioning.
+* [Flask-SQLAlchemy](http://flask-sqlalchemy.pocoo.org) integrates [SQLAlchemy](https://www.sqlalchemy.org/) into Flask for database modeling and access.
+* [Flask-User](http://flask-user.readthedocs.io/en/v0.6/) adds user management and authorization features.
+* [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) integrates [WTForms](https://wtforms.readthedocs.io) into Flask to handle form creation and validation.
+
+In addition the front end uses the open source versions of:
+* [Bootstrap](https://getbootstrap.com/)
+* [CoreUI](https://coreui.io/)
+* [Font Awesome](https://fontawesome.com/)
+
+
+## Unique Features
+
+* API Authentication and Authorization - this project can allow people with the appropriate role to generate API Keys, which in turn can be used with the `roles_accepted_api` decorator to grant API access to specific routes.
+
+* Versatile Configuration System - this project can be configured with a combination of configuration files, AWS Secrets Manager configuration, and environmental variables. This allows base settings to be built into the deployment, secrets to be managed securely, and any configuration value to be overridden by environmental variables.
+
+* A `makefile` with a variety of options to make common tasks easier to accomplish.
+
+* A `celery` based asynchronous task management system. This is extremely useful for long running tasks- they can be triggered in the web interface and then run on a worker node and take as long as they need to complete.
 
 
 ## Setting up a development environment
@@ -101,15 +130,6 @@ You can make use of the following users:
 
 
 ## Acknowledgements
-
-With thanks to the following Flask extensions and libraries:
-* [Celery][http://www.celeryproject.org/]
-* [CoreUI](https://coreui.io/)
-* [Alembic](http://alembic.zzzcomputing.com/)
-* [Flask](http://flask.pocoo.org/)
-* [Flask-Login](https://flask-login.readthedocs.io/)
-* [Flask-Migrate](https://flask-migrate.readthedocs.io/)
-* [Flask-User](http://flask-user.readthedocs.io/en/v0.6/)
 
 <!-- Please consider leaving this line. Thank you -->
 [Flask-Dash](https://github.com/twintechlabs/flaskdash) was used as a starting point for this code repository. That project was based off of the [Flask-User-starter-app](https://github.com/lingthio/Flask-User-starter-app).
