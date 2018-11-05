@@ -1,4 +1,4 @@
-# FlaskDash starter app v0.9
+# tedivm's flask starter app
 
 ![Screenshot](https://github.com/twintechlabs/flaskdash/blob/master/app/static/images/screenshot.png)
 
