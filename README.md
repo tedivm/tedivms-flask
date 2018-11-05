@@ -15,16 +15,7 @@ This package is designed to allow developers to start working on their specific 
 * Full user management system.
 * Server side session storage.
 * An API system with API tokens and route decorators.
-* Well organized directories with lots of comments
-    * app
-        * commands
-        * models
-        * static
-        * templates
-        * utils
-        * views
-    * docker
-    * tests
+* Well organized directories with lots of comments.
 * Includes test framework (`py.test` and `tox`)
 * Includes database migration framework (`alembic`, using `Flask-Migrate`)
 * Sends error emails to admins for unhandled exceptions
@@ -33,8 +24,8 @@ This package is designed to allow developers to start working on their specific 
 
 With thanks to the following Flask extensions and libraries:
 * [Beaker](https://beaker.readthedocs.io/en/latest/) for caching and session management.
-* [Celery][http://www.celeryproject.org/] for running asynchronous tasks on worker nodes.
-* [Click][https://click.palletsprojects.com/] for the creation of command line tools.
+* [Celery](http://www.celeryproject.org/) for running asynchronous tasks on worker nodes.
+* [Click](https://click.palletsprojects.com/) for the creation of command line tools.
 * [Flask](http://flask.pocoo.org/) the microframework framework which holds this all together.
 * [Flask-Login](https://flask-login.readthedocs.io/) allows users to login and signout.
 * [Flask-Migrate](https://flask-migrate.readthedocs.io/) integrates [Alembic](http://alembic.zzzcomputing.com/) into Flask to handle database versioning.
@@ -56,7 +47,7 @@ In addition the front end uses the open source versions of:
 
 * A `makefile` with a variety of options to make common tasks easier to accomplish.
 
-* A `celery` based asynchronous task management system. This is extremely useful for long running tasks- they can be triggered in the web interface and then run on a worker node and take as long as they need to complete.
+* A [Celery](http://www.celeryproject.org/) based asynchronous task management system. This is extremely useful for long running tasks- they can be triggered in the web interface and then run on a worker node and take as long as they need to complete.
 
 
 ## Setting up a development environment
