@@ -10,12 +10,12 @@ from datetime import datetime
 import os
 import yaml
 
-from flask import Flask
+from flask import Flask, session
 from flask_mail import Mail
 from flask_migrate import Migrate, MigrateCommand
 from flask.sessions import SessionInterface
 from flask_sqlalchemy import SQLAlchemy
-from flask_user import UserManager, UserMixin
+from flask_user import UserManager, UserMixin, user_logged_out
 from flask_wtf.csrf import CSRFProtect
 
 from beaker.cache import CacheManager
@@ -261,6 +261,10 @@ def init_session_manager(app):
 
     app.wsgi_app = SessionMiddleware(app.wsgi_app, session_opts)
     app.session_interface = BeakerSessionInterface()
+
+    @user_logged_out.connect_via(app)
+    def clear_session(sender, user, **extra):
+        session.clear()
 
 
 def init_celery_service(app):
