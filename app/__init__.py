@@ -15,7 +15,7 @@ from flask_mail import Mail
 from flask_migrate import Migrate, MigrateCommand
 from flask.sessions import SessionInterface
 from flask_sqlalchemy import SQLAlchemy
-from flask_user import UserManager, UserMixin, user_logged_out
+from flask_user import user_logged_out
 from flask_wtf.csrf import CSRFProtect
 
 from beaker.cache import CacheManager
@@ -55,6 +55,9 @@ def get_config():
                 app.config[setting] = False
             else:
                 app.config[setting] = os.environ[setting]
+    # Apply any config transformations here.
+    if app.config.get('USER_LDAP', False):
+        app.config['USER_ENABLE_USERNAME'] = True
     return app.config
 
 
@@ -156,15 +159,16 @@ def create_app(extra_config_settings={}):
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Setup an error-logger to send emails to app.config.ADMINS
-    if 'DEBUG' not in app.config or not app.config['DEBUG']:
-        if 'MAIL_SERVER' in app.config and 'ADMINS' in app.config:
-            init_email_error_handler(app)
+    if app.config.get('EMAIL_ERRORS', False):
+        init_email_error_handler(app)
 
     # Setup Flask-User to handle user account related forms
     from .models.user_models import User, MyRegisterForm
     from .views.misc_views import user_profile_page
+    from .extensions.ldap import TedivmUserManager
 
-    user_manager = UserManager(app, db, User)
+    #user_manager = UserManager(app, db, User)
+    user_manager = TedivmUserManager(app, db, User)
 
     return app
 

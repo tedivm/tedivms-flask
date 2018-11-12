@@ -8,14 +8,43 @@ services:
     environment:
       - CELERY_BROKER=rabbitmq
       - SQLALCHEMY_DATABASE_URI=postgres://dbuser:dbpassword@postgres/dbname
-      - ADMIN_EMAIL=admin@example.com
-      - ADMIN_PASSWORD=Password1
-      - DEV_EMAIL=dev@example.com
-      - DEV_PASSWORD=Password1
-      - USER_EMAIL=user@example.com
-      - USER_PASSWORD=Password1
       - SECRET_KEY=NotSecure
       - DEBUG=true
+
+
+      #
+      # Keep the lines below uncommented when using standard user management.
+      # Make sure they are commented out when using LDAP.
+      #
+
+      - ADMIN_USERNAME=admin
+      - ADMIN_EMAIL=admin@example.com
+      - ADMIN_PASSWORD=Password1
+      - DEV_USERNAME=developer
+      - DEV_EMAIL=dev@example.com
+      - DEV_PASSWORD=Password1
+      - USER_USERNAME=user
+      - USER_EMAIL=user@example.com
+      - USER_PASSWORD=Password1
+
+      #
+      # Uncomment below to enable LDAP.
+      #
+      #
+      # - USER_LDAP=true
+      # - LDAP_HOST=ldap://ldap
+      # - LDAP_BIND_DN=cn=admin,dc=example,dc=org
+      # - LDAP_BIND_PASSWORD=admin
+      # - LDAP_USERNAME_ATTRIBUTE=cn
+      # - LDAP_USER_BASE=ou=users,dc=example,dc=org
+      # - LDAP_GROUP_OBJECT_CLASS=posixGroup
+      # - LDAP_GROUP_ATTRIBUTE=cn
+      # - LDAP_GROUP_BASE=ou=groups,dc=example,dc=org
+      # - LDAP_GROUP_TO_ROLE_ADMIN=admin
+      # - LDAP_GROUP_TO_ROLE_DEV=dev
+      # - LDAP_GROUP_TO_ROLE_USER=user
+      # - LDAP_EMAIL_ATTRIBUTE=mail
+
     ports:
       - "80:80"
       - "5000:5000"
@@ -57,3 +86,27 @@ services:
 
   rabbitmq:
     image: rabbitmq
+
+
+  #
+  # Uncomment to enable LDAP- make sure to set `USER_LDAP` in the app as well.
+  #
+
+  #
+  # ldap:
+  #   image: osixia/openldap
+  #   command: --copy-service
+  #   volumes:
+  #     - ./docker/ldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif:ro
+  #   environment:
+  #     LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+  #
+  # phpldapadmin:
+  #   image: osixia/phpldapadmin:latest
+  #   environment:
+  #     PHPLDAPADMIN_LDAP_HOSTS: "ldap"
+  #     PHPLDAPADMIN_HTTPS: "false"
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #     - ldap

@@ -1,6 +1,6 @@
 # Copyright 2017 Twin Tech Labs. All rights reserved
 
-from flask import Blueprint, redirect, render_template, current_app
+from flask import Blueprint, redirect, render_template, current_app, abort
 from flask import request, url_for, flash, send_from_directory, jsonify, render_template_string
 from flask_user import current_user, login_required, roles_accepted
 
@@ -18,8 +18,6 @@ main_blueprint = Blueprint('main', __name__, template_folder='templates')
 def member_page():
     if not current_user.is_authenticated:
         return redirect(url_for('user.login'))
-    if current_user.has_role('admin', allow_admin=False):
-        return redirect(url_for('main.users'))
     return render_template('pages/member_base.html')
 
 # The Admin page is accessible to users with the 'admin' role
@@ -37,6 +35,9 @@ def user_admin_page():
 @main_blueprint.route('/create_user', methods=['GET', 'POST'])
 @roles_accepted('admin')
 def create_user_page():
+    if current_app.config.get('USER_LDAP', False):
+        abort(400)
+
     form = UserProfileForm()
     roles = Role.query.all()
     form.roles.choices = [(x.id,x.name) for x in roles]
@@ -70,6 +71,8 @@ def create_user_page():
 @main_blueprint.route('/users/<user_id>/delete', methods=['GET', 'POST'])
 @roles_accepted('admin')
 def delete_user_page(user_id):
+    if current_app.config.get('USER_LDAP', False):
+        abort(400)
     form = ConfirmationForm()
     user = User.query.filter(User.id == user_id).first()
     if not user:
@@ -86,6 +89,9 @@ def delete_user_page(user_id):
 @main_blueprint.route('/users/<user_id>/edit', methods=['GET', 'POST'])
 @roles_accepted('admin')
 def edit_user_page(user_id):
+    if current_app.config.get('USER_LDAP', False):
+        abort(400)
+
     user = User.query.filter(User.id == user_id).first()
     if not user:
         abort(404)
@@ -121,6 +127,9 @@ def edit_user_page(user_id):
 @main_blueprint.route('/pages/profile', methods=['GET', 'POST'])
 @login_required
 def user_profile_page():
+    if current_app.config.get('USER_LDAP', False):
+        abort(400)
+
     # Initialize form
     form = UserProfileForm(request.form, obj=current_user)
 

@@ -49,16 +49,16 @@ if [ ! -f ~/.hasrun ]; then
   python manage.py add-role dev Developer
   python manage.py add-role user User
 
-  if [[ -n $ADMIN_EMAIL ]] && [[ -n $ADMIN_PASSWORD ]]; then
-    python manage.py add-user $ADMIN_EMAIL $ADMIN_PASSWORD admin
+  if [[ -n $ADMIN_USERNAME ]] && [[ -n $ADMIN_EMAIL ]] && [[ -n $ADMIN_PASSWORD ]]; then
+    python manage.py add-user $ADMIN_USERNAME $ADMIN_EMAIL $ADMIN_PASSWORD admin
   fi
 
-  if [[ -n $DEV_EMAIL ]] && [[ -n $DEV_PASSWORD ]]; then
-    python manage.py add-user $DEV_EMAIL $DEV_PASSWORD dev
+  if [[ -n $DEV_USERNAME ]] && [[ -n $DEV_EMAIL ]] && [[ -n $DEV_PASSWORD ]]; then
+    python manage.py add-user $DEV_USERNAME $DEV_EMAIL $DEV_PASSWORD dev
   fi
 
-  if [[ -n $USER_EMAIL ]] && [[ -n $USER_PASSWORD ]]; then
-    python manage.py add-user $USER_EMAIL $USER_PASSWORD user
+  if [[ -n $USER_USERNAME ]] && [[ -n $USER_EMAIL ]] && [[ -n $USER_PASSWORD ]]; then
+    python manage.py add-user $USER_USERNAME $USER_EMAIL $USER_PASSWORD user
   fi
 
   touch ~/.hasrun

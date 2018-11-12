@@ -15,19 +15,24 @@
         <thead>
           <tr>
             <th>Email</th>
+            <th>Username</th>
             <th>Name</th>
             <th>Role</th>
             <th>Confirmed</th>
+            {% if not config.get('USER_LDAP', False) %}
             <th>Actions</th>
+            {% endif %}
           </tr>
         </thead>
         <tbody>
           {% for user in users %}
           <tr>
             <td>{{user.email}}</td>
+            <td>{{user.username}}</td>
             <td>{{user.name()}}</td>
             <td>{% for role in user.roles %}{{ role.name }}{{ ", " if not loop.last }}{% endfor %}</td>
             <td>{{user.email_confirmed_at}}</td>
+            {% if not config.get('USER_LDAP', False) %}
             <td>
               <div class="btn-group" role="group" aria-label="...">
                 <a href="{{ url_for('main.edit_user_page', user_id=user.id) }}"><i class="fa fa-pencil"></i></a>
@@ -36,6 +41,7 @@
                 <a href="{{ url_for('main.delete_user_page', user_id=user.id) }}"><i class="fa fa-remove"></i></a>
               </div>
             </td>
+            {% endif %}
           </tr>
           {% endfor %}
         </tbody>

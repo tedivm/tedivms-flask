@@ -33,7 +33,11 @@
                       <i class="icon-user"></i>
                     </span>
                   </div>
+                  {% if config['USER_ENABLE_USERNAME'] %}
+                  <input type="username" id="username" class="form-control" name="username" placeholder="Username">
+                  {% else %}
                   <input type="email" id="email" class="form-control" name="email" placeholder="Email">
+                  {% endif %}
                 </div>
                 <div class="input-group mb-4">
                   <div class="input-group-prepend">

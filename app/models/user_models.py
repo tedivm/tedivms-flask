@@ -2,25 +2,75 @@
 #
 # Authors: Ling Thio <ling.thio@gmail.com>, Matt Hogan <matt@twintechlabs.io>
 
+from flask import current_app
 from flask_user import UserMixin
 from flask_user.forms import RegisterForm
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, validators, PasswordField, BooleanField
 from app import db
 from app.utils.forms import MultiCheckboxField
+from app.extensions import ldap
+
+
+class TedivmUserMixin(UserMixin):
+
+    def has_roles(self, *requirements):
+        """ Return True if the user has all of the specified roles. Return False otherwise.
+
+            has_roles() accepts a list of requirements:
+                has_role(requirement1, requirement2, requirement3).
+
+            Each requirement is either a role_name, or a tuple_of_role_names.
+                role_name example:   'manager'
+                tuple_of_role_names: ('funny', 'witty', 'hilarious')
+            A role_name-requirement is accepted when the user has this role.
+            A tuple_of_role_names-requirement is accepted when the user has ONE of these roles.
+            has_roles() returns true if ALL of the requirements have been accepted.
+
+            For example:
+                has_roles('a', ('b', 'c'), d)
+            Translates to:
+                User has role 'a' AND (role 'b' OR role 'c') AND role 'd'"""
+
+        # Translates a list of role objects to a list of role_names
+        user_manager = current_app.user_manager
+
+        # has_role() accepts a list of requirements
+        for requirement in requirements:
+            if isinstance(requirement, (list, tuple)):
+                # this is a tuple_of_role_names requirement
+                tuple_of_role_names = requirement
+                authorized = False
+                for role_name in tuple_of_role_names:
+                    if self.has_role(role_name):
+                        # tuple_of_role_names requirement was met: break out of loop
+                        authorized = True
+                        break
+                if not authorized:
+                    return False                    # tuple_of_role_names requirement failed: return False
+            else:
+                # this is a role_name requirement
+                role_name = requirement
+                # the user must have this role
+                if self.has_role(role_name):
+                    return False                    # role_name requirement failed: return False
+
+        # All requirements have been met: return True
+        return True
+
+
 
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!
-class User(db.Model, UserMixin):
+class User(db.Model, TedivmUserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
 
     # User authentication information (required for Flask-User)
-    email = db.Column(db.Unicode(255), nullable=False, server_default=u'', unique=True)
+    username = db.Column(db.String(50), nullable=True, unique=True)
+    email = db.Column(db.Unicode(255), nullable=True, server_default=u'', unique=True)
     email_confirmed_at = db.Column(db.DateTime())
     password = db.Column(db.String(255), nullable=False, server_default='')
-    # reset_password_token = db.Column(db.String(100), nullable=False, server_default='')
-    active = db.Column(db.Boolean(), nullable=False, server_default='0')
 
     # User information
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
@@ -34,6 +84,13 @@ class User(db.Model, UserMixin):
     apikeys = db.relationship('ApiKey', backref='user')
 
     def has_role(self, role, allow_admin=True):
+
+        if current_app.config.get('USER_LDAP', False):
+            group = current_app.config.get('LDAP_GROUP_TO_ROLE_%s' % role.upper(), False)
+            if not group:
+                return False
+            return ldap.user_in_group(self.username, group)
+
         for item in self.roles:
             if item.name == role:
                 return True
@@ -42,7 +99,6 @@ class User(db.Model, UserMixin):
         return False
 
     def role(self):
-        print(self.roles)
         for item in self.roles:
             return item.name
 

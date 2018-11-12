@@ -41,6 +41,8 @@ In addition the front end uses the open source versions of:
 
 ## Unique Features
 
+* Database or LDAP Authentication - Applications built with this project can use the standard database backed users or can switch to LDAP authentication with a few configuration settings.
+
 * API Authentication and Authorization - this project can allow people with the appropriate role to generate API Keys, which in turn can be used with the `roles_accepted_api` decorator to grant API access to specific routes.
 
 * Versatile Configuration System - this project can be configured with a combination of configuration files, AWS Secrets Manager configuration, and environmental variables. This allows base settings to be built into the deployment, secrets to be managed securely, and any configuration value to be overridden by environmental variables.
@@ -86,6 +88,26 @@ Configuration can be loaded from the AWS Secrets Manager by setting the environm
 ### Environmental Variables
 
 Any environmental variables that have the same name as a configuration value in this application will automatically get loaded into the app's configuration.
+
+### Configuring LDAP
+
+Any installation can run with LDAP as its backend with these settings.
+
+```
+USER_LDAP=true
+LDAP_HOST=ldap://ldap
+LDAP_BIND_DN=cn=admin,dc=example,dc=org
+LDAP_BIND_PASSWORD=admin
+LDAP_USERNAME_ATTRIBUTE=cn
+LDAP_USER_BASE=ou=users,dc=example,dc=org
+LDAP_GROUP_OBJECT_CLASS=posixGroup
+LDAP_GROUP_ATTRIBUTE=cn
+LDAP_GROUP_BASE=ou=groups,dc=example,dc=org
+LDAP_GROUP_TO_ROLE_ADMIN=admin
+LDAP_GROUP_TO_ROLE_DEV=dev
+LDAP_GROUP_TO_ROLE_USER=user
+LDAP_EMAIL_ATTRIBUTE=mail
+```
 
 
 ## Initializing the Database

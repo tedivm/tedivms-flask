@@ -1,0 +1,116 @@
+# LDIF Export for dc=example,dc=org
+# Server: ldap (ldap)
+# Search Scope: sub
+# Search Filter: (objectClass=*)
+
+
+version: 1
+
+
+#
+# LDAP Root
+#
+
+
+# Entry:
+#dn: dc=example,dc=org
+#dc: example
+#o: Example Inc.
+#objectclass: top
+#objectclass: dcObject
+#objectclass: organization
+
+
+
+#
+# LDAP Organizational Units - Users and Groups
+#
+
+# Entry:
+dn: ou=groups,dc=example,dc=org
+objectclass: organizationalUnit
+objectclass: top
+ou: groups
+
+# Entry:
+dn: ou=users,dc=example,dc=org
+objectclass: organizationalUnit
+objectclass: top
+ou: users
+
+
+#
+# LDAP Groups
+#
+
+# Entry:
+dn: cn=admin,ou=groups,dc=example,dc=org
+cn: admin
+gidnumber: 500
+memberuid: admin
+objectclass: posixGroup
+objectclass: top
+
+# Entry:
+dn: cn=user,ou=groups,dc=example,dc=org
+cn: user
+gidnumber: 501
+memberuid: user
+objectclass: posixGroup
+objectclass: top
+
+# Entry:
+dn: cn=dev,ou=groups,dc=example,dc=org
+cn: dev
+gidnumber: 502
+memberuid: user
+objectclass: posixGroup
+objectclass: top
+
+
+#
+# LDAP Users
+#
+
+
+# Entry:
+dn: cn=admin,ou=users,dc=example,dc=org
+cn:  admin
+gidnumber: 500
+homedirectory: /home/users/admin
+mail: admin@example.org
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
+sn: admin
+uid: admin
+uidnumber: 1000
+userpassword: {MD5}KsnLfcArPACD63CJjlSbYw==
+
+# Entry:
+dn: cn=user,ou=users,dc=example,dc=org
+cn:  user
+gidnumber: 501
+homedirectory: /home/users/user
+mail: user@example.org
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
+sn: user
+uid: user
+uidnumber: 1001
+userpassword: {MD5}KsnLfcArPACD63CJjlSbYw==
+
+# Entry:
+dn: cn=dev,ou=users,dc=example,dc=org
+cn:  dev
+gidnumber: 502
+homedirectory: /home/users/dev
+mail: dev@example.org
+objectclass: inetOrgPerson
+objectclass: posixAccount
+objectclass: top
+sn: dev
+uid: dev
+uidnumber: 1002
+userpassword: {MD5}KsnLfcArPACD63CJjlSbYw==

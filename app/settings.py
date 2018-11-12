@@ -43,6 +43,21 @@ USER_AFTER_LOGOUT_ENDPOINT = 'main.member_page'
 USER_ALLOW_LOGIN_WITHOUT_CONFIRMED_EMAIL = False
 
 
+USER_LDAP = False
+LDAP_HOST=False
+LDAP_BIND_DN=False
+LDAP_BIND_PASSWORD=False
+LDAP_USERNAME_ATTRIBUTE=False
+LDAP_USER_BASE=False
+LDAP_GROUP_OBJECT_CLASS=False
+LDAP_GROUP_ATTRIBUTE=False
+LDAP_GROUP_BASE=False
+LDAP_GROUP_TO_ROLE_ADMIN=False
+LDAP_GROUP_TO_ROLE_DEV=False
+LDAP_GROUP_TO_ROLE_USER=False
+LDAP_EMAIL_ATTRIBUTE=False
+
+
 # Flask-Mail settings
 # For smtp.gmail.com to work, you MUST set "Allow less secure apps" to ON in Google Accounts.
 # Change it in https://myaccount.google.com/security#connectedapps (near the bottom).

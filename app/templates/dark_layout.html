@@ -56,6 +56,7 @@
                     <a class="nav-link nav-dropdown-toggle" href="#">
                       <i class="nav-icon icon-bell"></i> My Account</a>
                     <ul class="nav-dropdown-items">
+                      {% if not config.get('USER_LDAP', False) %}
                       <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.user_profile_page') }}">
                           <i class="nav-icon icon-drop"></i> Profile</a>
@@ -65,6 +66,7 @@
                         <a class="nav-link" href="{{ url_for('user.change_password') }}">
                           <i class="nav-icon icon-drop"></i> Password</a>
                       </li>
+                      {% endif %}
 
                       {% if current_user.has_role('admin') or current_user.has_role('dev') %}
                       <li class="nav-item">
