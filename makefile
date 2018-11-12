@@ -20,8 +20,7 @@ dependencies:
 	source $(ROOT_DIR)/env/bin/activate; yes w | python -m pip install -r $(ROOT_DIR)/requirements.txt
 
 upgrade_dependencies:
-	source $(ROOT_DIR)/env/bin/activate; yes w | python -m pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 python -m pip install -U
-	source $(ROOT_DIR)/env/bin/activate; python -m pip freeze | sed "/^$(APP_NAME)/ d" > requirements.txt
+	source $(ROOT_DIR)/env/bin/activate; ./bin/update_dependencies.sh $(ROOT_DIR)/requirements.txt
 
 save_dependencies:
 	source $(ROOT_DIR)/env/bin/activate; python -m pip freeze | sed "/^$(APP_NAME)/ d" > requirements.txt
