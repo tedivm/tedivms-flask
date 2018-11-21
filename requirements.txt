@@ -13,18 +13,18 @@ Flask-User==1.0.1.5
 Flask-WTF==0.14.2
 
 # Automated tests
-pytest==3.10.1
+pytest==4.0.0
 pytest-cov==2.6.0
 
 # Libraries
 beaker==1.10.0
-boto3==1.9.42
+boto3==1.9.48
 blinker==1.4
 celery==4.2.1
 click==7.0
 ldap3==2.5.1
 psycopg2-binary==2.7.6.1
-pyyaml==4.24
+pyyaml==3.13
 
 # Development tools
 # tox==3.5.2
