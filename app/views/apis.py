@@ -6,6 +6,7 @@ from flask import request, url_for, jsonify, current_app
 from app import db
 from app.models import user_models
 from app.utils.api import roles_accepted_api
+from app.extensions.ldap import authenticate
 
 import uuid
 
@@ -18,15 +19,17 @@ def api_create_credentials():
     password = request.form['password']
     label = request.form.get('label', None)
     user = user_models.User.query.filter(user_models.User.email == username).first()
-
     if not user:
-        abort(400)
+        user = user_models.User.query.filter(user_models.User.username == username).first()
+        if not user:
+            abort(400)
 
-    print(password)
-    print(user.password)
-
-    if not current_app.user_manager.verify_password(password, user.password):
-        abort(401)
+    if current_app.config.get('USER_LDAP', False):
+        if not authenticate(username, password):
+            abort(401)
+    else:
+        if not current_app.user_manager.verify_password(password, user.password):
+            abort(401)
 
     id = uuid.uuid4().hex[0:12]
     key = uuid.uuid4().hex

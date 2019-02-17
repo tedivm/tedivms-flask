@@ -139,6 +139,9 @@ def create_app(extra_config_settings={}):
 
 
     # Register blueprints
+    from app.extensions.jinja import jinja_extensions_blueprint
+    app.register_blueprint(jinja_extensions_blueprint)
+
     from app.views.misc_views import main_blueprint
     app.register_blueprint(main_blueprint)
 
@@ -149,14 +152,6 @@ def create_app(extra_config_settings={}):
     app.register_blueprint(api_blueprint)
     csrf_protect.exempt(api_blueprint)
 
-
-    # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
-    from wtforms.fields import HiddenField
-
-    def is_hidden_field_filter(field):
-        return isinstance(field, HiddenField)
-
-    app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Setup an error-logger to send emails to app.config.ADMINS
     if app.config.get('EMAIL_ERRORS', False):

@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 APP_NAME:=app
-
+PYTHON:=python3
 
 all: dependencies
 
@@ -15,28 +15,24 @@ clean_testenv:
 
 fresh_testenv: clean_testenv testenv
 
-dependencies:
-	if [ ! -d $(ROOT_DIR)/env ]; then python3.6 -m venv $(ROOT_DIR)/env; fi
+venv:
+	if [ ! -d $(ROOT_DIR)/env ]; then $(PYTHON) -m venv $(ROOT_DIR)/env; fi
+
+dependencies: venv
 	source $(ROOT_DIR)/env/bin/activate; yes w | python -m pip install -r $(ROOT_DIR)/requirements.txt
 
-upgrade_dependencies:
+upgrade_dependencies: venv
 	source $(ROOT_DIR)/env/bin/activate; ./bin/update_dependencies.sh $(ROOT_DIR)/requirements.txt
-
-save_dependencies:
-	source $(ROOT_DIR)/env/bin/activate; python -m pip freeze | sed "/^$(APP_NAME)/ d" > requirements.txt
 
 clean: clean_testenv
 	# Remove existing environment
 	rm -rf $(ROOT_DIR)/env;
 	rm -rf $(ROOT_DIR)/$(APP_NAME)/*.pyc;
 
-run_tests:
-	source $(ROOT_DIR)/env/bin/activate; py.test tests/
-
 upgrade_models:
 	rm -rf $(ROOT_DIR)/app.sqlite;
-	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db upgrade
-	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db migrate
+	source $(ROOT_DIR)/env/bin/activate; python manage.py db upgrade
+	source $(ROOT_DIR)/env/bin/activate; python manage.py db migrate
 	rm -rf $(ROOT_DIR)/app.sqlite;
 
 init_db:

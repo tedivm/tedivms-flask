@@ -6,24 +6,24 @@ Flask==1.0.2
 
 # Flask Packages
 Flask-Login==0.4.1
-Flask-Migrate==2.3.0
+Flask-Migrate==2.3.1
 Flask-SQLAlchemy==2.3.2
 Flask-BabelEx==0.9.3
 Flask-User==1.0.1.5
 Flask-WTF==0.14.2
 
 # Automated tests
-pytest==4.0.0
-pytest-cov==2.6.0
+pytest==4.1.1
+pytest-cov==2.6.1
 
 # Libraries
 beaker==1.10.0
-boto3==1.9.48
+boto3==1.9.86
 blinker==1.4
 celery==4.2.1
 click==7.0
-ldap3==2.5.1
-psycopg2-binary==2.7.6.1
+ldap3==2.5.2
+psycopg2-binary==2.7.7
 pyyaml==3.13
 
 # Development tools

@@ -54,7 +54,7 @@ services:
       - ./app:/app/app
       - ./manage.py:/app/manage.py
       - ./unicorn.py:/app/unicorn.py
-      - ~/.aws/credentials:/home/dicom_proxy/.aws/credentials
+      - ~/.aws/credentials:/home/apprunner/.aws/credentials
       - ~/.aws/config:/home/apprunner/.aws/config
 
 

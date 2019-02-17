@@ -51,5 +51,26 @@ def add_role(name, label):
     user.find_or_create_role(name, label)
 
 
+
+@cli.command(help='Change the password of a user')
+@click.argument('email')
+@click.argument('password', required=False)
+@click.option('-s', '--secure', is_flag=True, default=False, help='Set password with prompt without it appearing on screen')
+def reset_password(email, password, secure):
+    if not password and secure:
+        password = click.prompt('Password', hide_input=True, confirmation_prompt=True)
+    if not password:
+        raise click.UsageError("Password must be provided for the user")
+
+    user = User.query.filter(User.email == email).first()
+    if not user:
+        raise click.UsageError("User does not exist")
+
+    user.password = current_app.user_manager.hash_password(password)
+    db.session.commit()
+
+
+
+
 if __name__ == "__main__":
     cli()
