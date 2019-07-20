@@ -22,10 +22,10 @@ fi
 
 # Get service hostnames from the secrets manager.
 if [ ! -z "$AWS_SECRETS_MANAGER_CONFIG" ]; then
-  if [ "$SQLALCHEMY_DATABASE_URI" == "" ]; then
+  if [ -z "$SQLALCHEMY_DATABASE_URI" ]; then
     SQLALCHEMY_DATABASE_URI=$(secretcli get $AWS_SECRETS_MANAGER_CONFIG SQLALCHEMY_DATABASE_URI)
   fi
-  if [ "$CELERY_BROKER" == "" ]; then
+  if [ -z "$CELERY_BROKER" ]; then
     CELERY_BROKER=$(secretcli get $AWS_SECRETS_MANAGER_CONFIG CELERY_BROKER)
   fi
 fi
