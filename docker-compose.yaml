@@ -54,7 +54,7 @@ services:
       - ./app:/app/app
       - ./manage.py:/app/manage.py
       - ./unicorn.py:/app/unicorn.py
-      
+
       # If the app needs AWS access and you have it configured on your host uncomment these lines.
       # - ~/.aws/credentials:/home/apprunner/.aws/credentials
       # - ~/.aws/config:/home/apprunner/.aws/config
@@ -75,8 +75,10 @@ services:
     volumes:
       - ./app:/app/app
       - ./docker/worker/start_worker.sh:/home/apprunner/start_worker.sh
-      - ~/.aws/credentials:/home/apprunner/.aws/credentials
-      - ~/.aws/config:/home/apprunner/.aws/config
+
+      # If the app needs AWS access and you have it configured on your host uncomment these lines.
+      # - ~/.aws/credentials:/home/apprunner/.aws/credentials
+      # - ~/.aws/config:/home/apprunner/.aws/config
 
 
   postgres:
