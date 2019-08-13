@@ -54,12 +54,18 @@ In addition the front end uses the open source versions of:
 
 ## Setting up a development environment
 
+First we recommend either cloning this repository with the "Use this template" button on Github.
+
+
 We assume that you have `make` and `docker`.
 
     # Clone the code repository into ~/dev/my_app
     mkdir -p ~/dev
     cd ~/dev
-    git clone https://github.com/tedivm/flaskdash.git my_app
+    git clone https://github.com/tedivm/tedivms-flask my_app
+
+    # For the first run, and only the first run, we need to create the first round of SQLAlchemy models.
+    make init_db
 
     # Create the 'my_app' virtual environment and start docker containers
     make testenv
