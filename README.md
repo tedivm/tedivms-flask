@@ -63,6 +63,7 @@ We assume that you have `make` and `docker`.
     mkdir -p ~/dev
     cd ~/dev
     git clone https://github.com/tedivm/tedivms-flask my_app
+    cd my_app
 
     # For the first run, and only the first run, we need to create the first round of SQLAlchemy models.
     make init_db
