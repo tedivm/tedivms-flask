@@ -35,7 +35,7 @@ upgrade_models:
 	source $(ROOT_DIR)/env/bin/activate; python manage.py db migrate
 	rm -rf $(ROOT_DIR)/app.sqlite;
 
-init_db:
+init_db: dependencies
 	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db init
 	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db upgrade
 	source $(ROOT_DIR)/env/bin/activate; SECRET_KEY=TempKey python manage.py db migrate
