@@ -1,4 +1,5 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.6
+ARG PYTHON_VERSION=3.7
+FROM tiangolo/uwsgi-nginx-flask:python${PYTHON_VERSION}
 
 RUN adduser --disabled-login --gecos '' apprunner
 RUN mkdir -p /home/apprunner/.aws
