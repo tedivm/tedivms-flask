@@ -7,7 +7,7 @@ all: dependencies
 
 fresh: clean dependencies
 
-testenv: dependencies clean_testenv
+testenv: clean_testenv
 	docker-compose up --build
 
 clean_testenv:
