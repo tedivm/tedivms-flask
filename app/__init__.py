@@ -8,6 +8,7 @@ import boto3
 from celery import Celery
 from datetime import datetime
 import os
+import requests
 import yaml
 
 from flask import Flask, session
