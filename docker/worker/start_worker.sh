@@ -38,6 +38,14 @@ if [ "$CELERY_MIN_CONCURRENCY" == "" ]; then
 fi
 
 
-echo 'Launching celery worker without beat'
-echo "celery worker -A app:celery --loglevel=info --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY}"
-celery worker -A app:celery --loglevel=info --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY}
+if [ "$DISABLE_BEAT" = "true" ]
+then
+  echo 'Launching celery worker without beat'
+  echo "celery worker -A app.worker:celery --loglevel=info --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY}"
+  celery worker -A app.worker:celery --loglevel=info --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY}
+else
+  echo 'Launching celery worker with beat enabled'
+  rm -f ~/celerybeat-schedule
+  echo "celery worker -A app.worker:celery --loglevel=info --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY}" -B -s ~/celerybeat-schedule
+  celery worker -A app.worker:celery --loglevel=info --autoscale=${CELERY_MAX_CONCURRENCY},${CELERY_MIN_CONCURRENCY} -B -s ~/celerybeat-schedule
+fi
