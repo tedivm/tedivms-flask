@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
-REQUIREMENTS_FILE=$1
+REQUIREMENTS_FILE=requirements.txt
 
 while read p; do
   if [[ -z "${p// }" ]];then
     continue
   fi
   if [[ "${p// }" == \#* ]];then
+    continue
+  fi
+  if [[ "${p// }" == \git+ssh* ]];then
     continue
   fi
 
