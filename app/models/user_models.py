@@ -68,7 +68,7 @@ class User(db.Model, TedivmUserMixin):
 
     # User authentication information (required for Flask-User)
     username = db.Column(db.String(50), nullable=True, unique=True)
-    email = db.Column(db.Unicode(255), nullable=True, server_default=u'', unique=True)
+    email = db.Column(db.Unicode(255), nullable=True, unique=True)
     email_confirmed_at = db.Column(db.DateTime())
     password = db.Column(db.String(255), nullable=False, server_default='')
 
