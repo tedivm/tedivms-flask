@@ -74,7 +74,7 @@ def get_secrets(secret_name, region=False):
     else:
         secret = get_secret_value_response['SecretBinary'].decode("utf-8")
 
-    return yaml.load(secret)
+    return yaml.safe_load(secret)
 
 
 def get_secret_region():
