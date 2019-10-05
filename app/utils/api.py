@@ -2,9 +2,8 @@ from app.models import user_models as users
 from functools import wraps
 from flask import request, abort, current_app
 
-def is_authorized_api_user(roles):
+def is_authorized_api_user(roles=False):
     """Verify API Token and its owners permission to use it"""
-    print(request.headers)
     if 'API_ID' not in request.headers:
         return False
     if 'API_KEY' not in request.headers:
@@ -12,6 +11,9 @@ def is_authorized_api_user(roles):
     api_key = users.ApiKey.query.filter(users.ApiKey.id==request.headers['API_ID']).first()
     if not api_key:
         return False
+
+    if not roles:
+        return True
 
     if not api_key.user.has_role('admin'):
         for role in roles:
@@ -28,6 +30,17 @@ def roles_accepted_api(*role_names):
         @wraps(view_function)
         def decorated_view_function(*args, **kwargs):
             if not is_authorized_api_user(role_names):
+                return abort(403)
+            return view_function(*args, **kwargs)
+        return decorated_view_function
+    return wrapper
+
+
+def api_credentials_required():
+    def wrapper(view_function):
+        @wraps(view_function)
+        def decorated_view_function(*args, **kwargs):
+            if not is_authorized_api_user():
                 return abort(403)
             return view_function(*args, **kwargs)
         return decorated_view_function
