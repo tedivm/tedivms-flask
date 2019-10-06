@@ -2,6 +2,7 @@ from app.models import user_models as users
 from functools import wraps
 from flask import request, abort, current_app
 
+
 def is_authorized_api_user(roles=False):
     """Verify API Token and its owners permission to use it"""
     if 'API_ID' not in request.headers:
@@ -11,18 +12,16 @@ def is_authorized_api_user(roles=False):
     api_key = users.ApiKey.query.filter(users.ApiKey.id==request.headers['API_ID']).first()
     if not api_key:
         return False
-
+    if not current_app.user_manager.verify_password(request.headers['API_KEY'], api_key.hash):
+        return False
     if not roles:
         return True
-
-    if not api_key.user.has_role('admin'):
-        for role in roles:
-            if api_key.user.has_role(role):
-                break
-        else:
-            return False
-
-    return current_app.user_manager.verify_password(request.headers['API_KEY'], api_key.hash)
+    if api_key.user.has_role('admin'):
+        return True
+    for role in roles:
+        if api_key.user.has_role(role):
+            return True
+    return False
 
 
 def roles_accepted_api(*role_names):
