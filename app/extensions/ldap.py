@@ -34,11 +34,11 @@ def get_user_email(user):
         return False
     conn = get_bound_connection()
     user_search = get_dn_from_user(user)
-    user_object = '(objectclass=%s)' % (current_app.config['LDAP_GROUP_OBJECT_CLASS'],)
+    user_object = '(objectclass=%s)' % (current_app.config['LDAP_USER_OBJECT_CLASS'],)
     conn.search(user_search, user_object, attributes=[email_attribute])
     if len(conn.entries) < 1:
         return False
-    return getattr(conn.entries[0], email_attribute, False)
+    return getattr(conn.entries[0], email_attribute, False)[0]
 
 
 def user_in_group(user, group):
