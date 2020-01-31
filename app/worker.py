@@ -1,5 +1,8 @@
 from app import celery, create_app
-import app.tasks.edits
+
+# Make sure to import your celery tasks here!
+# Otherwise the worker will not pick them up.
+
 
 app = create_app()
 
