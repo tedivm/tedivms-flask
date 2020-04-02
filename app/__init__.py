@@ -1,9 +1,3 @@
-# __init__.py is a special Python file that allows a directory to become
-# a Python package so it can be accessed using the 'import' statement.
-
-# __init__.py is a special Python file that allows a directory to become
-# a Python package so it can be accessed using the 'import' statement.
-
 import boto3
 from celery import Celery
 from datetime import datetime
@@ -138,6 +132,8 @@ def create_app(extra_config_settings={}):
     # Setup Celery
     init_celery_service(app)
 
+    # Add HTTP Error pages
+    init_error_handlers(app)
 
     # Register blueprints
     from app.extensions.jinja import jinja_extensions_blueprint
@@ -269,3 +265,25 @@ def init_session_manager(app):
 
 def init_celery_service(app):
     celery.conf.update(app.config)
+
+
+def init_error_handlers(app):
+
+    def show_error(status, message='An unknown error has occured.'):
+        return render_template('error.html', error_code=status, message=message), status
+
+    @app.errorhandler(401)
+    def error_unauthorized(e):
+        return show_error(401, 'Unauthorized')
+
+    @app.errorhandler(403)
+    def error_forbidden(e):
+        return show_error(403, 'Forbidden')
+
+    @app.errorhandler(404)
+    def error_pagenotfound(e):
+        return show_error(404, 'Page not found.')
+
+    @app.errorhandler(500)
+    def error_servererror(e):
+        return show_error(500, 'An unknown error has occurred on the server.')
