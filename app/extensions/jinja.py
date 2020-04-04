@@ -29,3 +29,8 @@ def nl2br(eval_ctx, value):
     if eval_ctx.autoescape:
         return Markup(html_value)
     return html_value
+
+
+@jinja_extensions_blueprint.context_processor
+def inject_now():
+    return {'now': datetime.utcnow()}
