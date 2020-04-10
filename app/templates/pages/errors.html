@@ -1,0 +1,15 @@
+{% extends "common/dark_base.html" %}  {# common/page_base.html extends layout.html #}
+{% block title %} - {{ error_code }} Error{% endblock %}
+{% block content %}
+{% from "common/form_macros.html" import render_field %}
+<div class="card ">
+  <form action="" method="POST" class="form" role="form">
+    <div class="card-header ">
+      <strong>A {{ error_code }} Error Occurred</strong>
+    </div>
+    <div class="card-body ">
+      {{ message }}
+    </div>
+  </form>
+</div>
+{% endblock %}

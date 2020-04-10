@@ -5,7 +5,7 @@ import os
 import requests
 import yaml
 
-from flask import Flask, session
+from flask import Flask, session, render_template
 from flask_mail import Mail
 from flask_migrate import Migrate, MigrateCommand
 from flask.sessions import SessionInterface
@@ -138,6 +138,7 @@ def create_app(extra_config_settings={}):
     # Register blueprints
     from app.extensions.jinja import jinja_extensions_blueprint
     app.register_blueprint(jinja_extensions_blueprint)
+    app.jinja_env.globals.update(now=datetime.utcnow)
 
     from app.views.misc_views import main_blueprint
     app.register_blueprint(main_blueprint)
@@ -270,7 +271,7 @@ def init_celery_service(app):
 def init_error_handlers(app):
 
     def show_error(status, message='An unknown error has occured.'):
-        return render_template('error.html', error_code=status, message=message), status
+        return render_template('pages/errors.html', error_code=status, message=message), status
 
     @app.errorhandler(401)
     def error_unauthorized(e):

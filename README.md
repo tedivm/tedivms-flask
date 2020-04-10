@@ -132,7 +132,7 @@ LDAP_EMAIL_ATTRIBUTE=mail
     make testenv
 
 
-Point your web browser to http://localhost:5000/
+Point your web browser to http://localhost/
 
 You can make use of the following users:
 - email `user@example.com` with password `Password1`.
