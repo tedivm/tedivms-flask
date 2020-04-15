@@ -41,7 +41,7 @@ def apikeys_create():
 @apikeys_blueprint.route('/user/apikeys/<key_id>/delete', methods=['GET', 'POST'])
 @roles_accepted('dev', 'admin')
 def apikeys_delete(key_id):
-    form = forms.Confirm(request.form)
+    form = forms.ConfirmationForm(request.form)
     if request.method == 'POST':
         remove_key = users.ApiKey.query.filter_by(id=key_id, user_id=current_user.id).first()
         if remove_key:
