@@ -30,43 +30,43 @@ def get_config():
 
     # Load App Config settings
     # Load common settings from 'app/settings.py' file
-    app.config.from_object('app.settings')
+    app.config.from_object("app.settings")
     # Load local settings from environmental variable
-    if 'APPLICATION_SETTINGS' in os.environ:
-        app.config.from_envvar(os.environ['APPLICATION_SETTINGS'])
+    if "APPLICATION_SETTINGS" in os.environ:
+        app.config.from_envvar(os.environ["APPLICATION_SETTINGS"])
     # Load extra config settings from the AWS Secrets Manager
-    if 'AWS_SECRETS_MANAGER_CONFIG' in os.environ:
-        secret_config = get_secrets(os.environ['AWS_SECRETS_MANAGER_CONFIG'])
+    if "AWS_SECRETS_MANAGER_CONFIG" in os.environ:
+        secret_config = get_secrets(os.environ["AWS_SECRETS_MANAGER_CONFIG"])
         app.config.update(secret_config)
-    elif 'AWS_SECRETS_MANAGER_CONFIG' in app.config:
-        secret_config = get_secrets(app.config['AWS_SECRETS_MANAGER_CONFIG'])
+    elif "AWS_SECRETS_MANAGER_CONFIG" in app.config:
+        secret_config = get_secrets(app.config["AWS_SECRETS_MANAGER_CONFIG"])
         app.config.update(secret_config)
     # Load extra config settings from environment- note that the config key must exist in app.config to get picked up
     for setting in app.config:
         if setting in os.environ:
-            if os.environ[setting].lower() == 'true':
+            if os.environ[setting].lower() == "true":
                 app.config[setting] = True
-            elif os.environ[setting].lower() == 'false':
+            elif os.environ[setting].lower() == "false":
                 app.config[setting] = False
             else:
                 app.config[setting] = os.environ[setting]
     # Apply any config transformations here.
-    if app.config.get('USER_LDAP', False):
-        app.config['USER_ENABLE_USERNAME'] = True
+    if app.config.get("USER_LDAP", False):
+        app.config["USER_ENABLE_USERNAME"] = True
     return app.config
 
 
 def get_secrets(secret_name, region=False):
     if not region:
         region = get_secret_region()
-    client = boto3.client(service_name='secretsmanager', region_name=region)
+    client = boto3.client(service_name="secretsmanager", region_name=region)
 
     # Depending on whether the secret was a string or binary, one of these fields will be populated
     get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-    if 'SecretString' in get_secret_value_response:
-        secret = get_secret_value_response['SecretString']
+    if "SecretString" in get_secret_value_response:
+        secret = get_secret_value_response["SecretString"]
     else:
-        secret = get_secret_value_response['SecretBinary'].decode("utf-8")
+        secret = get_secret_value_response["SecretBinary"].decode("utf-8")
 
     return yaml.safe_load(secret)
 
@@ -74,8 +74,8 @@ def get_secrets(secret_name, region=False):
 def get_secret_region():
     """Extrapolate the preferred region when one isn't supplied"""
     # Check for specific environmental variable.
-    if 'AWS_SECRETS_REGION' in os.environ:
-        return os.environ['AWS_SECRETS_REGION']
+    if "AWS_SECRETS_REGION" in os.environ:
+        return os.environ["AWS_SECRETS_REGION"]
 
     # Check for boto3/awscli default region.
     boto3_session = boto3.session.Session()
@@ -83,23 +83,24 @@ def get_secret_region():
         return boto3_session.region_name
 
     # If this is being called from an EC2 instance use its region.
-    r = requests.get('http://169.254.169.254/latest/dynamic/instance-identity/document', timeout=0.2)
+    r = requests.get(
+        "http://169.254.169.254/latest/dynamic/instance-identity/document", timeout=0.2
+    )
     r.raise_for_status()
     data = r.json()
-    return data['region']
+    return data["region"]
 
 
 # We need the base configuration to setup services before the app is created.
 base_config = get_config()
 
 # Initiate Services
-celery = Celery(__name__, broker=base_config['CELERY_BROKER'])
-cache = None # Initiate below, but define here for scope reasons.
+celery = Celery(__name__, broker=base_config["CELERY_BROKER"])
+cache = None  # Initiate below, but define here for scope reasons.
 
 
 def create_app(extra_config_settings={}):
-    """Create a Flask applicaction.
-    """
+    """Create a Flask applicaction."""
     # Instantiate Flask
     app = Flask(__name__)
 
@@ -137,22 +138,25 @@ def create_app(extra_config_settings={}):
 
     # Register blueprints
     from app.extensions.jinja import jinja_extensions_blueprint
+
     app.register_blueprint(jinja_extensions_blueprint)
     app.jinja_env.globals.update(now=datetime.utcnow)
 
     from app.views.misc_views import main_blueprint
+
     app.register_blueprint(main_blueprint)
 
     from app.views.apikeys import apikeys_blueprint
+
     app.register_blueprint(apikeys_blueprint)
 
     from app.views.apis import api_blueprint
+
     app.register_blueprint(api_blueprint)
     csrf_protect.exempt(api_blueprint)
 
-
     # Setup an error-logger to send emails to app.config.ADMINS
-    if app.config.get('EMAIL_ERRORS', False):
+    if app.config.get("EMAIL_ERRORS", False):
         init_email_error_handler(app)
 
     # Setup Flask-User to handle user account related forms
@@ -160,7 +164,7 @@ def create_app(extra_config_settings={}):
     from .views.misc_views import user_profile_page
     from .extensions.ldap import TedivmUserManager
 
-    #user_manager = UserManager(app, db, User)
+    # user_manager = UserManager(app, db, User)
     user_manager = TedivmUserManager(app, db, User)
 
     return app
@@ -171,19 +175,20 @@ def init_email_error_handler(app):
     Initialize a logger to send emails on error-level messages.
     Unhandled exceptions will now send an email message to app.config.ADMINS.
     """
-    if app.debug: return  # Do not send error emails while developing
+    if app.debug:
+        return  # Do not send error emails while developing
 
     # Retrieve email settings from app.config
-    host = app.config['MAIL_SERVER']
-    port = app.config['MAIL_PORT']
-    from_addr = app.config['MAIL_DEFAULT_SENDER']
-    username = app.config['MAIL_USERNAME']
-    password = app.config['MAIL_PASSWORD']
-    secure = () if app.config.get('MAIL_USE_TLS') else None
+    host = app.config["MAIL_SERVER"]
+    port = app.config["MAIL_PORT"]
+    from_addr = app.config["MAIL_DEFAULT_SENDER"]
+    username = app.config["MAIL_USERNAME"]
+    password = app.config["MAIL_PASSWORD"]
+    secure = () if app.config.get("MAIL_USE_TLS") else None
 
     # Retrieve app settings from app.config
-    to_addr_list = app.config['ADMINS']
-    subject = app.config.get('APP_SYSTEM_ERROR_SUBJECT_LINE', 'System Error')
+    to_addr_list = app.config["ADMINS"]
+    subject = app.config.get("APP_SYSTEM_ERROR_SUBJECT_LINE", "System Error")
 
     # Setup an SMTP mail handler for error-level messages
     import logging
@@ -204,53 +209,54 @@ def init_email_error_handler(app):
 
 
 def init_cache_manager(app):
-    cache_opts = {'cache.expire': app.config.get('CACHE_EXPIRE', 3600)}
+    cache_opts = {"cache.expire": app.config.get("CACHE_EXPIRE", 3600)}
 
-    if 'CACHE_TYPE' not in app.config or not app.config['CACHE_TYPE']:
-        app.config['CACHE_TYPE'] = 'file'
+    if "CACHE_TYPE" not in app.config or not app.config["CACHE_TYPE"]:
+        app.config["CACHE_TYPE"] = "file"
 
-    if app.config['CACHE_TYPE'] is 'file':
-        if 'CACHE_ROOT' not in app.config or not app.config['CACHE_ROOT']:
-            app.config['CACHE_ROOT'] = '/tmp/%s' % __name__
+    if app.config["CACHE_TYPE"] is "file":
+        if "CACHE_ROOT" not in app.config or not app.config["CACHE_ROOT"]:
+            app.config["CACHE_ROOT"] = "/tmp/%s" % __name__
 
-    cache_opts['cache.type'] = app.config['CACHE_TYPE']
+    cache_opts["cache.type"] = app.config["CACHE_TYPE"]
 
-    if 'CACHE_ROOT' in app.config and app.config['CACHE_ROOT']:
-        cache_opts['cache.data_dir'] = app.config['CACHE_ROOT'] + '/data'
-        cache_opts['cache.lock_dir'] = app.config['CACHE_ROOT'] + '/lock'
+    if "CACHE_ROOT" in app.config and app.config["CACHE_ROOT"]:
+        cache_opts["cache.data_dir"] = app.config["CACHE_ROOT"] + "/data"
+        cache_opts["cache.lock_dir"] = app.config["CACHE_ROOT"] + "/lock"
 
-    if 'CACHE_URL' in app.config and app.config['CACHE_URL']:
-        cache_opts['cache.url'] = app.config['CACHE_URL']
-
+    if "CACHE_URL" in app.config and app.config["CACHE_URL"]:
+        cache_opts["cache.url"] = app.config["CACHE_URL"]
 
     cache = CacheManager(**parse_cache_config_options(cache_opts))
 
 
 def init_session_manager(app):
-    session_opts = {'cache.expire': 3600}
+    session_opts = {"cache.expire": 3600}
 
-    if 'CACHE_TYPE' not in app.config or not app.config['CACHE_TYPE']:
-        app.config['CACHE_TYPE'] = 'file'
+    if "CACHE_TYPE" not in app.config or not app.config["CACHE_TYPE"]:
+        app.config["CACHE_TYPE"] = "file"
 
-    if app.config['CACHE_TYPE'] == 'file':
-        if 'CACHE_ROOT' not in app.config or not app.config['CACHE_ROOT']:
-            app.config['CACHE_ROOT'] = '/tmp/%s' % __name__
+    if app.config["CACHE_TYPE"] == "file":
+        if "CACHE_ROOT" not in app.config or not app.config["CACHE_ROOT"]:
+            app.config["CACHE_ROOT"] = "/tmp/%s" % __name__
 
-    session_opts['session.type'] = app.config['CACHE_TYPE']
+    session_opts["session.type"] = app.config["CACHE_TYPE"]
 
-    if 'CACHE_ROOT' in app.config and app.config['CACHE_ROOT']:
-        session_opts['session.data_dir'] = app.config['CACHE_ROOT'] + '/session'
+    if "CACHE_ROOT" in app.config and app.config["CACHE_ROOT"]:
+        session_opts["session.data_dir"] = app.config["CACHE_ROOT"] + "/session"
 
-    if 'CACHE_URL' in app.config and app.config['CACHE_URL']:
-        session_opts['session.url'] = app.config['CACHE_URL']
+    if "CACHE_URL" in app.config and app.config["CACHE_URL"]:
+        session_opts["session.url"] = app.config["CACHE_URL"]
 
-    session_opts['session.auto'] = app.config.get('SESSION_AUTO', True)
-    session_opts['session.cookie_expires'] = app.config.get('SESSION_COOKIE_EXPIRES', 86400)
-    session_opts['session.secret'] = app.secret_key
+    session_opts["session.auto"] = app.config.get("SESSION_AUTO", True)
+    session_opts["session.cookie_expires"] = app.config.get(
+        "SESSION_COOKIE_EXPIRES", 86400
+    )
+    session_opts["session.secret"] = app.secret_key
 
     class BeakerSessionInterface(SessionInterface):
         def open_session(self, app, request):
-            session = request.environ['beaker.session']
+            session = request.environ["beaker.session"]
             return session
 
         def save_session(self, app, session, response):
@@ -269,22 +275,24 @@ def init_celery_service(app):
 
 
 def init_error_handlers(app):
-
-    def show_error(status, message='An unknown error has occured.'):
-        return render_template('pages/errors.html', error_code=status, message=message), status
+    def show_error(status, message="An unknown error has occured."):
+        return (
+            render_template("pages/errors.html", error_code=status, message=message),
+            status,
+        )
 
     @app.errorhandler(401)
     def error_unauthorized(e):
-        return show_error(401, 'Unauthorized')
+        return show_error(401, "Unauthorized")
 
     @app.errorhandler(403)
     def error_forbidden(e):
-        return show_error(403, 'Forbidden')
+        return show_error(403, "Forbidden")
 
     @app.errorhandler(404)
     def error_pagenotfound(e):
-        return show_error(404, 'Page not found.')
+        return show_error(404, "Page not found.")
 
     @app.errorhandler(500)
     def error_servererror(e):
-        return show_error(500, 'An unknown error has occurred on the server.')
+        return show_error(500, "An unknown error has occurred on the server.")

@@ -11,20 +11,23 @@ from app.extensions.ldap import authenticate
 import uuid
 
 # When using a Flask app factory we must use a blueprint to avoid needing 'app' for '@app.route'
-api_blueprint = Blueprint('api', __name__, template_folder='templates')
+api_blueprint = Blueprint("api", __name__, template_folder="templates")
 
-@api_blueprint.route('/api/credentials', methods=['POST'])
+
+@api_blueprint.route("/api/credentials", methods=["POST"])
 def api_create_credentials():
-    username = request.form['username']
-    password = request.form['password']
-    label = request.form.get('label', None)
+    username = request.form["username"]
+    password = request.form["password"]
+    label = request.form.get("label", None)
     user = user_models.User.query.filter(user_models.User.email == username).first()
     if not user:
-        user = user_models.User.query.filter(user_models.User.username == username).first()
+        user = user_models.User.query.filter(
+            user_models.User.username == username
+        ).first()
         if not user:
             abort(400)
 
-    if current_app.config.get('USER_LDAP', False):
+    if current_app.config.get("USER_LDAP", False):
         if not authenticate(username, password):
             abort(401)
     else:
@@ -38,4 +41,4 @@ def api_create_credentials():
     db.session.add(new_key)
     db.session.commit()
 
-    return jsonify({'id': id,'key': key})
+    return jsonify({"id": id, "key": key})

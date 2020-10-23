@@ -30,12 +30,14 @@ def find_or_create_user(first_name, last_name, username, email, password, role=N
         user = User.query.filter(User.email == email).first()
 
     if not user:
-        user = User(email=email,
-                    first_name=first_name,
-                    last_name=last_name,
-                    password=current_app.user_manager.hash_password(password),
-                    active=True,
-                    email_confirmed_at=datetime.datetime.utcnow())
+        user = User(
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            password=current_app.user_manager.hash_password(password),
+            active=True,
+            email_confirmed_at=datetime.datetime.utcnow(),
+        )
         if role:
             user.roles.append(role)
         db.session.add(user)

@@ -29,3 +29,4 @@ requests==2.23.0
 
 # Development tools
 # tox==3.5.2
+black==20.8b1
