@@ -5,7 +5,8 @@ import os
 import requests
 import yaml
 
-from flask import Flask, session, render_template
+from flask import Flask, render_template
+from flask import session as current_session
 from flask_mail import Mail
 from flask_migrate import Migrate, MigrateCommand
 from flask.sessions import SessionInterface
@@ -261,7 +262,7 @@ def init_session_manager(app):
 
     @user_logged_out.connect_via(app)
     def clear_session(sender, user, **extra):
-        session.clear()
+        current_session.clear()
 
 
 def init_celery_service(app):
