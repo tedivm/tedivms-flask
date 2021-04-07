@@ -24,7 +24,7 @@ celery==4.4.2
 click==7.1.1
 ldap3==2.7
 psycopg2-binary==2.8.5
-pyyaml==5.3.1
+pyyaml==5.4
 requests==2.23.0
 
 # Development tools
