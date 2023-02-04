@@ -6,6 +6,9 @@ This code base serves as starting point for writing your next Flask application.
 
 This package is designed to allow developers to start working on their specific features immediately while also making it simple to deploy the project into production. It contains a number of configured extensions and libraries as well as unique features specifically built for this package. It also is completely dockerized, with both a docker-compose testenv and the ability to easily make images off of the application for pushing into production.
 
+## Rob's Awesome Template
+
+If you like this project you may also like my latest template, [Rob's Awesome Python Template](https://github.com/tedivm/robs_awesome_python_template). It is updated with modern best practices and a variety of optional services.
 
 ## Code characteristics
 
@@ -23,6 +26,7 @@ This package is designed to allow developers to start working on their specific 
 ## Configured Extensions and Libraries
 
 With thanks to the following Flask extensions and libraries:
+
 * [Beaker](https://beaker.readthedocs.io/en/latest/) for caching and session management.
 * [Celery](http://www.celeryproject.org/) for running asynchronous tasks on worker nodes.
 * [Click](https://click.palletsprojects.com/) for the creation of command line tools.
@@ -34,6 +38,7 @@ With thanks to the following Flask extensions and libraries:
 * [Flask-WTF](https://flask-wtf.readthedocs.io/en/stable/) integrates [WTForms](https://wtforms.readthedocs.io) into Flask to handle form creation and validation.
 
 In addition the front end uses the open source versions of:
+
 * [Bootstrap](https://getbootstrap.com/)
 * [CoreUI](https://coreui.io/)
 * [Font Awesome](https://fontawesome.com/)
@@ -132,12 +137,12 @@ LDAP_EMAIL_ATTRIBUTE=mail
     make testenv
 
 
-Point your web browser to http://localhost/
+Point your web browser to <http://localhost/>
 
 You can make use of the following users:
-- email `user@example.com` with password `Password1`.
-- email `dev@example.com` with password `Password1`.
-- email `admin@example.com` with password `Password1`.
+* email `user@example.com` with password `Password1`.
+* email `dev@example.com` with password `Password1`.
+* email `admin@example.com` with password `Password1`.
 
 
 ## Running the automated tests
@@ -153,6 +158,7 @@ You can make use of the following users:
 [Flask-Dash](https://github.com/twintechlabs/flaskdash) was used as a starting point for this code repository. That project was based off of the [Flask-User-starter-app](https://github.com/lingthio/Flask-User-starter-app).
 
 ## Authors
+
 - Robert Hafner (tedivms-flask) -- tedivm@tedivm.com
-- Matt Hogan (flaskdash) -- matt AT twintechlabs DOT io
-- Ling Thio (flask-user) -- ling.thio AT gmail DOT com
+* Matt Hogan (flaskdash) -- matt AT twintechlabs DOT io
+* Ling Thio (flask-user) -- ling.thio AT gmail DOT com
